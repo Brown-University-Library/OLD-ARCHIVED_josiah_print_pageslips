@@ -25,7 +25,6 @@ class Mailer( object ):
 
     def send_email( self ):
         """ Sends email. """
-        log.debug( u'send_email() starting' )
         try:
             TO = self._build_mail_to()  # utf-8
             MESSAGE = self.UNICODE_MESSAGE.encode( 'utf-8', 'replace' )  # utf-8
@@ -54,6 +53,7 @@ class Mailer( object ):
         payload['From'] = self.UTF8_FROM_HEADER
         payload['Subject'] = Header( self.UNICODE_SUBJECT, 'utf-8' )  # SUBJECT must be unicode
         payload['Reply-to'] = self.UTF8_REPLY_TO_HEADER
+        log.debug( u'payload, `%s`' % payload.as_string() )
         return payload
 
     # end class Mailer

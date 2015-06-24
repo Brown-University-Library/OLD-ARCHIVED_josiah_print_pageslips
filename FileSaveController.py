@@ -17,8 +17,8 @@ from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
 
 
 ## instances
-date_prepper = DatePrepper.DatePrepper()
-number_determiner = NumberDeterminer.NumberDeterminer()
+date_prepper = DatePrepper()
+number_determiner = NumberDeterminer()
 
 
 ## settings from env/activate
@@ -377,9 +377,7 @@ class FileSaveController( object ):
         if message_type == 'problem':
             subject = u'josiah-pageslip processing problem'
             m = Mailer( subject, message )
-            logger.debug( u'about to send email' )
             m.send_email()
-            logger.debug( u'email sent' )
 
         logger.info( u'Automated ssh session ending' )
 
