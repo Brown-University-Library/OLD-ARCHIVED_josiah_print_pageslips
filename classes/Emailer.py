@@ -21,10 +21,11 @@ class Mailer( object ):
         self.UTF8_REPLY_TO_HEADER = os.environ['PGSLP__UTF8_REPLY_TO_HEADER']
         self.UNICODE_SUBJECT = UNICODE_SUBJECT
         self.UNICODE_MESSAGE = UNICODE_MESSAGE
-        log.debug( u'Mailer instantiated.' )
+        log.debug( u'Mailer instantiated' )
 
     def send_email( self ):
         """ Sends email. """
+        log.debug( u'send_email() starting' )
         try:
             TO = self._build_mail_to()  # utf-8
             MESSAGE = self.UNICODE_MESSAGE.encode( 'utf-8', 'replace' )  # utf-8

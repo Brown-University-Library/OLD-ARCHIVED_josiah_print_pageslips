@@ -10,13 +10,21 @@ Manages export of Annex requests to Annex server.
 """
 
 import json, logging, os, pprint, sys
+import pexpect
 from josiah_print_pageslips.classes.Emailer import Mailer
+from josiah_print_pageslips.classes.DatePrepper import DatePrepper
+from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
 
+
+## instances
+date_prepper = DatePrepper.DatePrepper()
+number_determiner = NumberDeterminer.NumberDeterminer()
 
 
 ## settings from env/activate
 LOG_PATH = os.environ['PGSLP__LOG_PATH']
 LOG_LEVEL = os.environ['PGSLP__LOG_LEVEL']  # 'DEBUG' or 'INFO'
+
 
 ## log config
 log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
@@ -40,13 +48,11 @@ class FileSaveController( object ):
         self.login_password = os.environ['PGSLP__LOGIN_PASSWORD']
         self.initials_name = os.environ['PGSLP__INITIALS_NAME']
         self.initials_password = os.environ['PGSLP__INITIALS_PASSWORD']
-        self.date_prepper = None
-        self.number_determiner = None
 
 
-    def runCode(self):
+    def run_code(self):
 
-        logger.info( u'starting runCode()' )
+        logger.info( u'starting run_code()' )
 
         #######
         # setup environment
@@ -55,13 +61,9 @@ class FileSaveController( object ):
         for path in self.PATH_ADDITIONS:
             sys.path.append( path )
 
-        import pexpect
-        from josiah_print_pageslips.classes import DatePrepper, NumberDeterminer
 
-        self.date_prepper = DatePrepper.DatePrepper()
-        self.number_determiner = NumberDeterminer.NumberDeterminer()
 
-        dateAndTimeText = self.date_prepper.obtainDate()
+        dateAndTimeText = date_prepper.obtainDate()
         logger.info( u'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
@@ -79,7 +81,7 @@ class FileSaveController( object ):
         except Exception as e:
             message = u'connect via ssh FAILED, exception, `%s`' % unicode(repr(e))
             logger.error( message )
-            self.endProgram( message=message, type='problem', child=child )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
@@ -92,7 +94,10 @@ class FileSaveController( object ):
             logger.info( u'login step - success' )
         except:
             message = u'Login step FAILED'
-            self.endProgram( message=message, type='problem', child=child )
+            self.endProgram( message=message, message_type='problem', child=child )
+
+
+        1/0
 
 
         #######
@@ -302,7 +307,7 @@ class FileSaveController( object ):
         #######
         screenNameText = "access 'Print page slips - certify printout' screen step"
 
-        fileName = self.date_prepper.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
+        fileName = date_prepper.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
 
         try:  # substep A
             child.sendline(fileName)  # Is File save ready?  (y/n) yFile_name :
@@ -325,7 +330,7 @@ class FileSaveController( object ):
             self.endProgram(newLogEntry, "exceptionFailure", child)
 
         # number_determiner = NumberDeterminer.NumberDeterminer()
-        self.number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
+        number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
         newLogEntry = screenNameText + " - success, " + number_determiner.noticesPrintedText
 
         self.log = self.log + "\n" + newLogEntry
@@ -351,13 +356,13 @@ class FileSaveController( object ):
         self.endProgram(newLogEntry, "success", child)
 
 
-    def endProgram( self, message, type, child ):
+    def endProgram( self, message, message_type, child ):
         """ Ends script in consistent manner.
             Called by various run_code() steps. """
 
         logger.debug( u'starting endProgram()' )
         logger.debug( u'message, `%s`' % message )
-        logger.debug( u'type, `%s`' % type )
+        logger.debug( u'message_type, `%s`' % message_type )
         logger.debug( u'child, `%s`' % child )
 
         if child == None:  # happens on failed connection
@@ -369,9 +374,10 @@ class FileSaveController( object ):
             except Exception as e:
                 logger.error( u'Problem killing process, exception, `%s`' % unicode(repr(e)) )
 
-        if type == 'problem':
+        if message_type == 'problem':
             subject = u'josiah-pageslip processing problem'
             m = Mailer( subject, message )
+            logger.debug( u'about to send email' )
             m.send_email()
             logger.debug( u'email sent' )
 
@@ -383,4 +389,4 @@ class FileSaveController( object ):
 
 if __name__ == "__main__":
     controllerInstance = FileSaveController()
-    controllerInstance.runCode()
+    controllerInstance.run_code()
