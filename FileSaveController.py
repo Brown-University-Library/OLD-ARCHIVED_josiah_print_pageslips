@@ -35,10 +35,10 @@ class FileSaveController( object ):
         self.ssh_target_host = os.environ['PGSLP__SSH_TARGET_HOST']
         self.login_name = os.environ['PGSLP__LOGIN_NAME']
         self.login_password = os.environ['PGSLP__LOGIN_PASSWORD']
-        self.initialsName = os.environ['PGSLP__INITIALS_NAME']
-        self.initialsPassword = os.environ['PGSLP__INITIALS_PASSWORD']
-        self.datePrepperInstance = None
-        self.numberDeterminerInstance = None
+        self.initials_name = os.environ['PGSLP__INITIALS_NAME']
+        self.initials_password = os.environ['PGSLP__INITIALS_PASSWORD']
+        self.date_prepper = None
+        self.number_determiner = None
 
 
     def runCode(self):
@@ -53,12 +53,12 @@ class FileSaveController( object ):
             sys.path.append( path )
 
         import pexpect
-        from public_code.classes import DatePrepper, NumberDeterminer
+        from josiah_print_pageslips.classes import DatePrepper, NumberDeterminer
 
-        self.datePrepperInstance = DatePrepper.DatePrepper()
-        self.numberDeterminerInstance = NumberDeterminer.NumberDeterminer()
+        self.date_prepper = DatePrepper.DatePrepper()
+        self.number_determiner = NumberDeterminer.NumberDeterminer()
 
-        dateAndTimeText = self.datePrepperInstance.obtainDate()
+        dateAndTimeText = self.date_prepper.obtainDate()
         logger.info( u'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
@@ -117,9 +117,9 @@ class FileSaveController( object ):
         try:
             child.send('C')  # "C > CIRCULATION subsystem"
             child.expect("key your initials")
-            child.sendline(initialsName)
+            child.sendline(initials_name)
             child.expect("key your password")
-            child.sendline(initialsPassword)
+            child.sendline(initials_password)
             child.expect("CIRCULATION SUBSYSTEM")
             child.expect("Choose one")  # "Choose one (O,I,R,H,D,V,P,A,Q)"
             newLogEntry = screenNameText + "success"
@@ -158,9 +158,9 @@ class FileSaveController( object ):
         try:
             child.send('N')  # "N > Print circulation NOTICES"
             child.expect("key your initials")
-            child.sendline(initialsName)
+            child.sendline(initials_name)
             child.expect("key your password")
-            child.sendline(initialsPassword)
+            child.sendline(initials_password)
             child.expect("PRINT CIRCULATION NOTICES")
             child.expect("Choose one")  # "Choose one (O,X,R,H,P,L,B,S,C,Q)"
             newLogEntry = screenNameText + "success"
@@ -299,7 +299,7 @@ class FileSaveController( object ):
         #######
         screenNameText = "access 'Print page slips - certify printout' screen step"
 
-        fileName = self.datePrepperInstance.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
+        fileName = self.date_prepper.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
 
         try:  # substep A
             child.sendline(fileName)  # Is File save ready?  (y/n) yFile_name :
@@ -321,9 +321,9 @@ class FileSaveController( object ):
             newLogEntry = screenNameText + "C - " + "FAILURE"
             self.endProgram(newLogEntry, "exceptionFailure", child)
 
-        # numberDeterminerInstance = NumberDeterminer.NumberDeterminer()
-        self.numberDeterminerInstance.figureNoticesNumber(textToExamineForNoticesNumber)
-        newLogEntry = screenNameText + " - success, " + numberDeterminerInstance.noticesPrintedText
+        # number_determiner = NumberDeterminer.NumberDeterminer()
+        self.number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
+        newLogEntry = screenNameText + " - success, " + number_determiner.noticesPrintedText
 
         self.log = self.log + "\n" + newLogEntry
         if(self.debug == "on"):
