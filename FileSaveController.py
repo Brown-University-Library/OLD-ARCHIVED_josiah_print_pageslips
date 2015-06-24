@@ -1,10 +1,13 @@
-# top
+# -*- coding: utf-8 -*-
 
 
-'''
-Part of Josiah-to-Annex Telnet code.
-Manage export of Annex requests to Annex server.
-'''
+"""
+Manages export of Annex requests to Annex server.
+- Part of Josiah-to-Annex Telnet code.
+- Assumes:
+  - virtual environment set up
+  - site-packages `requirements.pth` file adds josiah_print_pageslips enclosing-directory to sys path.
+"""
 
 import json, logging, os, pprint, sys
 from josiah_print_pageslips.classes.Emailer import Mailer
