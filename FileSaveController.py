@@ -59,9 +59,6 @@ class FileSaveController( object ):
         # setup environment
         #######
 
-        # for path in self.PATH_ADDITIONS:
-        #     sys.path.append( path )
-
         dateAndTimeText = date_prepper.obtainDate()
         logger.info( u'Automated ssh session starting at `%s`' % dateAndTimeText )
 
@@ -114,7 +111,7 @@ class FileSaveController( object ):
         # access *** CIRCULATION SUBSYSTEM ***
         #######
 
-        screen_name_text = "access 'Circulation' screen step - "
+        screen_name_text = "access 'Circulation' screen step"
         try:
             1/0
             child.send('C')  # "C > CIRCULATION subsystem"
@@ -124,39 +121,32 @@ class FileSaveController( object ):
             child.sendline(initials_password)
             child.expect("CIRCULATION SUBSYSTEM")
             child.expect("Choose one")  # "Choose one (O,I,R,H,D,V,P,A,Q)"
-            newLogEntry = screen_name_text + "success"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
-
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access *** ADDITIONAL CIRCULATION FUNCTIONS ***
         #######
 
-        screen_name_text = "access 'Additional circulation' screen step - "
+        screen_name_text = "access 'Additional circulation' screen step"
         try:
             child.send('A')  # "A > ADDITIONAL circulation functions"
             child.expect("ADDITIONAL CIRCULATION FUNCTIONS")
             child.expect("Choose one")  # "Choose one (F,H,R,L,I,C,N,E,T,U,D,B,P,S,O,Q)"
-            newLogEntry = screen_name_text + "success"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access *** PRINT CIRCULATION NOTICES ***
         #######
 
-        screen_name_text = "access 'Print circulation notices' screen step - "
+        screen_name_text = "access 'Print circulation notices' screen step"
         try:
             child.send('N')  # "N > Print circulation NOTICES"
             child.expect("key your initials")
@@ -165,46 +155,38 @@ class FileSaveController( object ):
             child.sendline(initials_password)
             child.expect("PRINT CIRCULATION NOTICES")
             child.expect("Choose one")  # "Choose one (O,X,R,H,P,L,B,S,C,Q)"
-            newLogEntry = screen_name_text + "success"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access 'Print page slips - start'
         #######
 
-        screen_name_text = "access 'Print page slips - start' screen step - "
-        option = ""
+        screen_name_text = "access 'Print page slips - start' screen step"
+        option = ''
         try:
             child.send('P')  # "P > Print PAGING slips"
-            option = child.expect(["Choose one", "Someone is printing page slips"])  # "Choose one (1,2,3,Q)"
-            if(option == 0):
-                newLogEntry = screen_name_text + "success"
-            if(option == 1):
-                newLogEntry = screen_name_text + "FAILURE: PROBLEM: 'Someone is printing page slips'"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            option = child.expect( ["Choose one", "Someone is printing page slips"] )  # "Choose one (1,2,3,Q)"
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
+        if(option == 0):
+            logger.info( u'%s - success' % screen_name_text )
         if(option == 1):
-            newLogEntry = "closing session"
-            self.endProgram(newLogEntry, "success", child)
+            message = u'%s - FAILURE; Problem: Someone is printing page-slips; this run of the script will stop now.'
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access 'Print page slips - preparing notices' screen
         #######
 
-        screen_name_text = "access 'Print page slips - preparing notices' screen step - "
-        option = ""
+        screen_name_text = "access 'Print page slips - preparing notices' screen step"
+        option = ''
         try:
             child.send('3')  # "3 > Prepare notices for Annex"
             child.expect("notices for Annex")
@@ -219,81 +201,72 @@ class FileSaveController( object ):
             if(self.debug == "on"):
                 print newLogEntry
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
+        if(option == 0):
+            logger.info( u'%s - success' % screen_name_text )
         if(option == 1):
-            newLogEntry = "closing session"
-            self.endProgram(newLogEntry, "success", child)
+            message = u'%s - NO PAGE-SLIP NOTICES TO PRINT' % screen_name_text
+            self.endProgram( message=message, message_type='success', child=child )
+        if(option == 2):
+            logger.info( u'%s - success (lots of cancellations, proceeding)' % screen_name_text )
 
 
         #######
         # access 'Print page slips - notices to process' screen
         #######
 
-        screen_name_text = "access 'Print page slips - notices to process' screen step - "
+        screen_name_text = "access 'Print page slips - notices to process' screen step"
         try:
             child.send(' ')  # "Press <SPACE> to continue"
             child.expect("BEGIN printing paging slips")
             child.expect("Choose one")  # "Choose one (B,S,P,A,N,C,T,Q)"
-            newLogEntry = screen_name_text + "success"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access 'Print page slips - begin printing' screen
         #######
 
-        screen_name_text = "access 'Print page slips - begin printing' screen step - "
+        screen_name_text = "access 'Print page slips - begin printing' screen step"
         try:
             child.send('B')  # "B > BEGIN printing paging slips starting with item 1"
             child.expect("File save")
             child.expect("Choose one")  # "Choose one (1-4)"
-            newLogEntry = screen_name_text + "success"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access 'Print page slips - confirm file-save' screen
         #######
-        screen_name_text = "access 'Print page slips - confirm file-save' screen step - "
+        screen_name_text = "access 'Print page slips - confirm file-save' screen step"
         try:
             child.send('2')  # "2 > File save"
             child.expect("Is File save ready")  # "Is File save ready?  (y/n)"
-            newLogEntry = screen_name_text + "success"
-            self.log = self.log + "\n" + newLogEntry
-            if(self.debug == "on"):
-                print newLogEntry
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access 'Print page slips - name file' screen
         #######
-        screen_name_text = "access 'Print page slips - name file' screen step - "
+        screen_name_text = "access 'Print page slips - name file' screen step"
         try:
             child.send('y')  # "Is File save ready?  (y/n)"
             child.expect("File_name")  # "Is File save ready?  (y/n) yFile_name : "
+            logger.info( u'%s - success' % screen_name_text )
         except Exception as e:
-            newLogEntry = screen_name_text + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
-
-        newLogEntry = screen_name_text + "success"
-        self.log = self.log + "\n" + newLogEntry
-        if(self.debug == "on"):
-            print newLogEntry
+            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
@@ -303,51 +276,44 @@ class FileSaveController( object ):
 
         fileName = date_prepper.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
 
+        substep_text = u'%s - A' % screen_name_text
         try:  # substep A
             child.sendline(fileName)  # Is File save ready?  (y/n) yFile_name :
             child.expect("the printout OK")
             textToExamineForNoticesNumber = child.before  # Will capture all text from after 'Is File save ready?  (y/n) yFile_name : ' to before 'the printout OK'
         except Exception as e:
-            newLogEntry = screen_name_text + "A - " + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+
+        substep_text = u'%s - B' % screen_name_text
         try:  # substep B
             child.send("y")  # Was the printout OK? (y/n)
             child.expect("removed from print file")
         except Exception as e:
-            newLogEntry = screen_name_text + "B - " + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+
+        substep_text = u'%s - C' % screen_name_text
         try:  # substep C
             child.send(" ")  # Press <SPACE> to continue
             child.expect("PRINT CIRCULATION NOTICES")
         except Exception as e:
-            newLogEntry = screen_name_text + "C - " + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+            message = u'%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
-        # number_determiner = NumberDeterminer.NumberDeterminer()
         number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
-        newLogEntry = screen_name_text + " - success, " + number_determiner.noticesPrintedText
-
-        self.log = self.log + "\n" + newLogEntry
-        if(self.debug == "on"):
-            print newLogEntry
+        logger.info( u'%s - success, %s' % (screen_name_text, number_determiner.noticesPrintedText) )
 
 
         #######
         # close
         #######
 
-        newLogEntry = "closing session"
-        if(self.debug == "on"):
-            print newLogEntry
-            print ""
-            print "My pid:"
-            print str(child.pid)
-            print ""
+        logger.info( u'closing session; pid, `%s`' % str(child.pid) )
+        sys.stdout.flush()
+        self.endProgram( message=u'closing session', message_type='success', child=child )
 
-        if(self.debug == "on"):
-            sys.stdout.flush()
-
-        self.endProgram(newLogEntry, "success", child)
+        # end def run_code()
 
 
     def endProgram( self, message, message_type, child ):
