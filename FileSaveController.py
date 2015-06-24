@@ -38,8 +38,7 @@ class FileSaveController( object ):
         self.initialsName = os.environ['PGSLP__INITIALS_NAME']
         self.initialsPassword = os.environ['PGSLP__INITIALS_PASSWORD']
         self.datePrepperInstance = None
-        self.emailerInstance = None
-        self.prefsInstance = None
+        self.numberDeterminerInstance = None
 
 
     def runCode(self):
@@ -54,11 +53,10 @@ class FileSaveController( object ):
             sys.path.append( path )
 
         import pexpect
-        from public_code.classes import DatePrepper, Emailer, NumberDeterminer, Prefs
+        from public_code.classes import DatePrepper, NumberDeterminer
 
         self.datePrepperInstance = DatePrepper.DatePrepper()
-        self.emailerInstance = Emailer.Emailer()
-        self.prefsInstance = Prefs.Prefs()
+        self.numberDeterminerInstance = NumberDeterminer.NumberDeterminer()
 
         dateAndTimeText = self.datePrepperInstance.obtainDate()
         logger.info( u'Automated ssh session starting at `%s`' % dateAndTimeText )
@@ -301,8 +299,7 @@ class FileSaveController( object ):
         #######
         screenNameText = "access 'Print page slips - certify printout' screen step"
 
-        datePrepperInstance = DatePrepper.DatePrepper()
-        fileName = datePrepperInstance.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
+        fileName = self.datePrepperInstance.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
 
         try:  # substep A
             child.sendline(fileName)  # Is File save ready?  (y/n) yFile_name :
@@ -324,8 +321,8 @@ class FileSaveController( object ):
             newLogEntry = screenNameText + "C - " + "FAILURE"
             self.endProgram(newLogEntry, "exceptionFailure", child)
 
-        numberDeterminerInstance = NumberDeterminer.NumberDeterminer()
-        numberDeterminerInstance.figureNoticesNumber(textToExamineForNoticesNumber)
+        # numberDeterminerInstance = NumberDeterminer.NumberDeterminer()
+        self.numberDeterminerInstance.figureNoticesNumber(textToExamineForNoticesNumber)
         newLogEntry = screenNameText + " - success, " + numberDeterminerInstance.noticesPrintedText
 
         self.log = self.log + "\n" + newLogEntry
