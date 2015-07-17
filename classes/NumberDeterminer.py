@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Part of Josiah-to-Annex Telnet code.
 Determine number of notices printed.

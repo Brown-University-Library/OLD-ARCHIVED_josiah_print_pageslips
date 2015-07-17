@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Part of LAS-to-Josiah code.
 Obtain date in right format when needed.
