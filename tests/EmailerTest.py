@@ -3,7 +3,7 @@ Part of Josiah-to-Annex Telnet code.
 Manage screen navigation.
 """
 
-
+from __future__ import unicode_literals
 
 import Emailer
 import unittest

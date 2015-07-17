@@ -11,6 +11,8 @@ experienced programmers.  Visit http://diveintopython.org/ for the
 latest version.
 """
 
+from __future__ import unicode_literals
+
 __author__ = "Mark Pilgrim (mark@diveintopython.org)"
 __version__ = "$Revision: 1.4 $"
 __date__ = "$Date: 2004/05/05 21:57:19 $"
@@ -18,6 +20,7 @@ __copyright__ = "Copyright (c) 2001 Mark Pilgrim"
 __license__ = "Python"
 
 import sys, os, re, unittest
+
 
 def regressionTest():
     path = os.path.abspath(os.path.dirname(sys.argv[0]))

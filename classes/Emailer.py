@@ -2,6 +2,8 @@
 
 """ Unicode-friendly emailer. """
 
+from __future__ import unicode_literals
+
 import json, logging, os, smtplib
 from email.Header import Header
 from email.mime.text import MIMEText

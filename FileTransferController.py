@@ -1,11 +1,11 @@
 # top
 
-
 '''
 Part of Josiah-to-Annex Telnet code.
 Manage export of Annex requests to Annex server.
 '''
 
+from __future__ import unicode_literals
 
 
 class FileTransferController:

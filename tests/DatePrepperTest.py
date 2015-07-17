@@ -2,6 +2,7 @@
 Part of LAS-to-Josiah code.
 """
 
+from __future__ import unicode_literals
 
 import DatePrepper
 import unittest

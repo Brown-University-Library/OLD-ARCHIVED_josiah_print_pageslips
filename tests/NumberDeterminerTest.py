@@ -2,10 +2,10 @@
 Part of Josiah-to-Las_Josiah code.
 """
 
+from __future__ import unicode_literals
 
 import NumberDeterminer
 import unittest
-
 
 
 class NumberDeterminerTest(unittest.TestCase):

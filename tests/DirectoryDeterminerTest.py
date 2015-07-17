@@ -2,10 +2,10 @@
 DirectoryDeterminerTest.py
 """
 
+from __future__ import unicode_literals
 
 import DirectoryDeterminer
 import unittest
-
 
 
 class DirectoryDeterminerTest(unittest.TestCase):

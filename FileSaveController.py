@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 """
 Manages export of Annex requests to Annex server.
 - Part of Josiah-to-Annex Telnet code.
@@ -8,6 +7,8 @@ Manages export of Annex requests to Annex server.
   - virtual environment set up
   - site-packages `requirements.pth` file adds josiah_print_pageslips enclosing-directory to sys path.
 """
+
+from __future__ import unicode_literals
 
 import json, logging, os, pprint, sys
 import pexpect
