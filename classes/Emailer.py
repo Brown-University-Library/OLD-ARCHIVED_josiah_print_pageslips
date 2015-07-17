@@ -23,7 +23,7 @@ class Mailer( object ):
         self.UTF8_REPLY_TO_HEADER = os.environ['PGSLP__UTF8_REPLY_TO_HEADER']
         self.UNICODE_SUBJECT = UNICODE_SUBJECT
         self.UNICODE_MESSAGE = UNICODE_MESSAGE
-        log.debug( u'Mailer instantiated' )
+        log.debug( 'Mailer instantiated' )
 
     def send_email( self ):
         """ Sends email. """
@@ -35,7 +35,7 @@ class Mailer( object ):
             s.sendmail( self.UTF8_FROM_REAL, TO, payload.as_string() )
             s.quit()
         except Exception as e:
-            log.error( u'problem sending mail, exception, `%s`' % unicode(repr(e)) )
+            log.error( 'problem sending mail, exception, `%s`' % unicode(repr(e)) )
         return
 
     def _build_mail_to( self ):
@@ -55,7 +55,7 @@ class Mailer( object ):
         payload['From'] = self.UTF8_FROM_HEADER
         payload['Subject'] = Header( self.UNICODE_SUBJECT, 'utf-8' )  # SUBJECT must be unicode
         payload['Reply-to'] = self.UTF8_REPLY_TO_HEADER
-        log.debug( u'payload, `%s`' % payload.as_string() )
+        log.debug( 'payload, `%s`' % payload.as_string() )
         return payload
 
     # end class Mailer

@@ -33,8 +33,8 @@ log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
 logging.basicConfig(
     # filename=LOG_PATH, level=log_level[LOG_LEVEL],
     filename=LOG_PATH, level=log_level[LOG_LEVEL],
-    format=u'[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
-    datefmt=u'%d/%b/%Y %H:%M:%S'
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S'
     )
 logger = logging.getLogger(__name__)
 
@@ -54,14 +54,14 @@ class FileSaveController( object ):
 
     def run_code(self):
 
-        logger.info( u'starting run_code()' )
+        logger.info( 'starting run_code()' )
 
         #######
         # setup environment
         #######
 
         dateAndTimeText = date_prepper.obtainDate()
-        logger.info( u'Automated ssh session starting at `%s`' % dateAndTimeText )
+        logger.info( 'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
         #######
@@ -74,9 +74,9 @@ class FileSaveController( object ):
             if( LOG_LEVEL == 'DEBUG' ):
                 child.logfile = sys.stdout
             child.delaybeforesend = .5
-            logger.info( u'connect via ssh step - success' )
+            logger.info( 'connect via ssh step - success' )
         except Exception as e:
-            message = u'connect via ssh FAILED, exception, `%s`' % unicode(repr(e))
+            message = 'connect via ssh FAILED, exception, `%s`' % unicode(repr(e))
             logger.error( message )
             self.endProgram( message=message, message_type='problem', child=child )
 
@@ -88,9 +88,9 @@ class FileSaveController( object ):
         try:
             child.expect('password: ')
             child.sendline( self.login_password )
-            logger.info( u'login step - success' )
+            logger.info( 'login step - success' )
         except Exception as e:
-            message = u'Login step FAILED, exception, `%s`' % unicode(repr(e))
+            message = 'Login step FAILED, exception, `%s`' % unicode(repr(e))
             logger.error( message )
             self.endProgram( message=message, message_type='problem', child=child )
 
@@ -102,9 +102,9 @@ class FileSaveController( object ):
         screen_name_text = "access 'Main menu' screen step"
         try:
             child.expect('Choose one')  # "Choose one (S,D,C,M,A,Q)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -122,9 +122,9 @@ class FileSaveController( object ):
             child.sendline(initials_password)
             child.expect("CIRCULATION SUBSYSTEM")
             child.expect("Choose one")  # "Choose one (O,I,R,H,D,V,P,A,Q)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -137,9 +137,9 @@ class FileSaveController( object ):
             child.send('A')  # "A > ADDITIONAL circulation functions"
             child.expect("ADDITIONAL CIRCULATION FUNCTIONS")
             child.expect("Choose one")  # "Choose one (F,H,R,L,I,C,N,E,T,U,D,B,P,S,O,Q)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -156,9 +156,9 @@ class FileSaveController( object ):
             child.sendline(initials_password)
             child.expect("PRINT CIRCULATION NOTICES")
             child.expect("Choose one")  # "Choose one (O,X,R,H,P,L,B,S,C,Q)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -172,13 +172,13 @@ class FileSaveController( object ):
             child.send('P')  # "P > Print PAGING slips"
             option = child.expect( ["Choose one", "Someone is printing page slips"] )  # "Choose one (1,2,3,Q)"
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
         if(option == 0):
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         if(option == 1):
-            message = u'%s - FAILURE; Problem: Someone is printing page-slips; this run of the script will stop now.'
+            message = '%s - FAILURE; Problem: Someone is printing page-slips; this run of the script will stop now.'
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -202,16 +202,16 @@ class FileSaveController( object ):
             if(self.debug == "on"):
                 print newLogEntry
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
         if(option == 0):
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         if(option == 1):
-            message = u'%s - NO PAGE-SLIP NOTICES TO PRINT' % screen_name_text
+            message = '%s - NO PAGE-SLIP NOTICES TO PRINT' % screen_name_text
             self.endProgram( message=message, message_type='success', child=child )
         if(option == 2):
-            logger.info( u'%s - success (lots of cancellations, proceeding)' % screen_name_text )
+            logger.info( '%s - success (lots of cancellations, proceeding)' % screen_name_text )
 
 
         #######
@@ -223,9 +223,9 @@ class FileSaveController( object ):
             child.send(' ')  # "Press <SPACE> to continue"
             child.expect("BEGIN printing paging slips")
             child.expect("Choose one")  # "Choose one (B,S,P,A,N,C,T,Q)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -238,9 +238,9 @@ class FileSaveController( object ):
             child.send('B')  # "B > BEGIN printing paging slips starting with item 1"
             child.expect("File save")
             child.expect("Choose one")  # "Choose one (1-4)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -251,9 +251,9 @@ class FileSaveController( object ):
         try:
             child.send('2')  # "2 > File save"
             child.expect("Is File save ready")  # "Is File save ready?  (y/n)"
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -264,9 +264,9 @@ class FileSaveController( object ):
         try:
             child.send('y')  # "Is File save ready?  (y/n)"
             child.expect("File_name")  # "Is File save ready?  (y/n) yFile_name : "
-            logger.info( u'%s - success' % screen_name_text )
+            logger.info( '%s - success' % screen_name_text )
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -277,42 +277,42 @@ class FileSaveController( object ):
 
         fileName = date_prepper.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
 
-        substep_text = u'%s - A' % screen_name_text
+        substep_text = '%s - A' % screen_name_text
         try:  # substep A
             child.sendline(fileName)  # Is File save ready?  (y/n) yFile_name :
             child.expect("the printout OK")
             textToExamineForNoticesNumber = child.before  # Will capture all text from after 'Is File save ready?  (y/n) yFile_name : ' to before 'the printout OK'
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
-        substep_text = u'%s - B' % screen_name_text
+        substep_text = '%s - B' % screen_name_text
         try:  # substep B
             child.send("y")  # Was the printout OK? (y/n)
             child.expect("removed from print file")
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
-        substep_text = u'%s - C' % screen_name_text
+        substep_text = '%s - C' % screen_name_text
         try:  # substep C
             child.send(" ")  # Press <SPACE> to continue
             child.expect("PRINT CIRCULATION NOTICES")
         except Exception as e:
-            message = u'%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
         number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
-        logger.info( u'%s - success, %s' % (screen_name_text, number_determiner.noticesPrintedText) )
+        logger.info( '%s - success, %s' % (screen_name_text, number_determiner.noticesPrintedText) )
 
 
         #######
         # close
         #######
 
-        logger.info( u'closing session; pid, `%s`' % str(child.pid) )
+        logger.info( 'closing session; pid, `%s`' % str(child.pid) )
         sys.stdout.flush()
-        self.endProgram( message=u'closing session', message_type='success', child=child )
+        self.endProgram( message='closing session', message_type='success', child=child )
 
         # end def run_code()
 
@@ -321,26 +321,26 @@ class FileSaveController( object ):
         """ Ends script in consistent manner.
             Called by various run_code() steps. """
 
-        logger.debug( u'starting endProgram()' )
-        logger.debug( u'message, `%s`' % message )
-        logger.debug( u'message_type, `%s`' % message_type )
-        logger.debug( u'child, `%s`' % child )
+        logger.debug( 'starting endProgram()' )
+        logger.debug( 'message, `%s`' % message )
+        logger.debug( 'message_type, `%s`' % message_type )
+        logger.debug( 'child, `%s`' % child )
 
         if child == None:  # happens on failed connection
-            logger.info( u'no pexpect child' )
+            logger.info( 'no pexpect child' )
         else:
             try:
                 os.popen( 'kill -9 ' + str(child.pid) )
-                logger.debug( u'script process successfully ended' )
+                logger.debug( 'script process successfully ended' )
             except Exception as e:
-                logger.error( u'Problem killing process, exception, `%s`' % unicode(repr(e)) )
+                logger.error( 'Problem killing process, exception, `%s`' % unicode(repr(e)) )
 
         if message_type == 'problem':
-            subject = u'josiah-pageslip processing problem'
+            subject = 'josiah-pageslip processing problem'
             m = Mailer( subject, message )
             m.send_email()
 
-        logger.info( u'Automated ssh session ending' )
+        logger.info( 'Automated ssh session ending' )
 
         sys.exit()
 
