@@ -6,39 +6,30 @@ Obtains date in needed formats.
 
 from __future__ import unicode_literals
 
-import string, time
+import datetime
 
 
 class DatePrepper( object ):
 
-    def __init__( self ):
-       self.timeToFormat = ''
+    def __init__( self, dt_tm_obj=None ):
+       self.dt_tm_obj = None  # allows date obj to be passed in for testing
 
-    def obtainDate(self):
-        """ Preps date for initial log entry.
+    def obtain_date(self):
+        """ Preps date for initial log entry in format `Wed Jul 13 13:41:39 EDT 2005`.
             Called by FileSaveController.run_code() and FileTransferController.run_code() """
-        if len(self.timeToFormat) == 0:
-            theTime = time.localtime()
-        else:
-            theTime = self.timeToFormat
-        formattedTime = time.strftime( '%a %b %d %H:%M:%S %Z %Y', theTime )
-        return formattedTime
+        if not self.dt_tm_obj:
+            self.dt_tm_obj = datetime.datetime.now()
+        formatted_utf8_time = datetime.datetime.strftime( self.dt_tm_obj, '%a %b %d %H:%M:%S EDT %Y' )
+        formatted_time = formatted_utf8_time.decode( 'utf-8' )
+        return formatted_time
 
-    def obtainMiniNameTwo(self):
+    def obtain_mini_name(self):
         """ Prepares date-based filename in format `jta_20050802_090539`.
-            Called by FileSaveController.run_code()
-            Resource: <http://docs.python.org/lib/module-time.html> """
-        if len(self.timeToFormat) == 0:
-            rawDateInfo = time.localtime()
-        else:
-            rawDateInfo = self.timeToFormat
-        fourDigitYear = time.strftime( '%Y', rawDateInfo )
-        twoDigitMonth = time.strftime( '%m', rawDateInfo )
-        twoDigitDay = time.strftime( '%d', rawDateInfo )
-        twoDigitHour = time.strftime( '%H', rawDateInfo )
-        twoDigitMinute = time.strftime( '%M', rawDateInfo )
-        twoDigitSecond = time.strftime( '%S', rawDateInfo )
-        formattedTime = 'jta_' + fourDigitYear + twoDigitMonth + twoDigitDay + '_' + twoDigitHour + twoDigitMinute + twoDigitSecond
-        return formattedTime
+            Called by FileSaveController.run_code() """
+        if not self.dt_tm_obj:
+            self.dt_tm_obj = datetime.datetime.now()
+        formatted_utf8_time = datetime.datetime.strftime( self.dt_tm_obj, 'jta_%Y%m%d_%H%M%S' )
+        formatted_time = formatted_utf8_time.decode( 'utf-8' )
+        return formatted_time
 
     # end class DatePrepper

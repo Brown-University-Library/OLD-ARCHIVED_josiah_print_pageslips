@@ -57,7 +57,7 @@ class FileSaveController( object ):
         # setup environment
         #######
 
-        dateAndTimeText = date_prepper.obtainDate()
+        dateAndTimeText = date_prepper.obtain_date()
         logger.info( 'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
@@ -276,7 +276,7 @@ class FileSaveController( object ):
         #######
         screen_name_text = "access 'Print page slips - certify printout' screen step"
 
-        fileName = date_prepper.obtainMiniNameTwo()  # returns in format "jta_20050802_090539"
+        fileName = date_prepper.obtain_mini_name()  # returns in format "jta_20050802_090539"
 
         substep_text = '%s - A' % screen_name_text
         try:  # substep A

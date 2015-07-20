@@ -57,7 +57,7 @@ class FileTransferController( object ):
         # setup environment
         #######
 
-        dateAndTimeText = date_prepper.obtainDate()
+        dateAndTimeText = date_prepper.obtain_date()
         logger.info( 'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
@@ -372,7 +372,7 @@ class FileTransferController( object ):
     #         errorMessage = errorMessage + "---"
     #         self.log = self.log + "\n" + errorMessage
 
-    #     dateAndTimeText = datePrepperInstance.obtainDate()
+    #     dateAndTimeText = datePrepperInstance.obtain_date()
     #     self.log = self.log + "\n\n" + "Automated ssh session ending at " + dateAndTimeText
     #     self.log = self.log + "\n\n" + "-------"
 
