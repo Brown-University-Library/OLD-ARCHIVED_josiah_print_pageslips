@@ -132,39 +132,33 @@ class FileTransferController( object ):
         # access 'Read/write MARC records' screen
         #######
 
-        screenNameText = "access 'Read/write marc records' screen step - "
+        screen_name_text = "access 'Read/write marc records' screen step - "
         try:
             child.send('M')  # "M > Read/write MARC records"
             child.expect("READ/WRITE MARC RECORDS")
             child.expect("Choose one")  # "Choose one (B,A,S,N,P,X,U,M,L,F,T,Q)"
-        except:
-            newLogEntry = screenNameText + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
-
-        newLogEntry = screenNameText + "success"
-        self.log = self.log + "\n" + newLogEntry
-        if(self.debug == "on"):
-            print newLogEntry
-
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
         # access 'Send print files out of innopac' screen
         #######
 
-        screenNameText = "access 'Send print files out of innopac' screen step - "
+        screen_name_text = "access 'Send print files out of innopac' screen step - "
         try:
             child.send('F')  # "F > Send print files out of INNOPAC using FTP"
             child.expect("Send print files out of INNOPAC")
             option = child.expect(["Choose one", "until their combined total size"])  # "Choose one (F,R,Y,Q)"
-        except:
-            newLogEntry = screenNameText + "FAILURE"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
         if(option == 0):
-            newLogEntry = screenNameText + "success"
+            newLogEntry = screen_name_text + "success"
         if(option == 1):
-            newLogEntry = screenNameText + "FAILURE: PROBLEM: total size of files in FTP list is too big"
+            newLogEntry = screen_name_text + "FAILURE: PROBLEM: total size of files in FTP list is too big"
             newLogEntry = newLogEntry + "\n" + "closing session"
             if(self.debug == "on"):
                 print newLogEntry
@@ -176,7 +170,6 @@ class FileTransferController( object ):
             print newLogEntry
 
 
-
         #######
         # Build list of files
         # If no JTAs, exit
@@ -184,13 +177,12 @@ class FileTransferController( object ):
         #######
 
 
-
         #######
         # access 'Innopac file transfer' screen
         # Look for file to send
         #######
 
-        screenNameText = "access 'Innopac file transfer' screen step - "
+        screen_name_text = "access 'Innopac file transfer' screen step - "
 
         fnDeterminerInstance = NumberDeterminer.NumberDeterminer()
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
@@ -203,17 +195,17 @@ class FileTransferController( object ):
                 child.send(numberToEnterString)  # i.e."2 > jta_20060329_134110.p"
                 child.expect("INNOPAC FILE TRANSFER PROGRAM")
                 child.expect("Remote machine ID")  # "Choose one (F,R,Y,Q)"
-            except:
-                newLogEntry = screenNameText + "FAILURE"
-                self.endProgram(newLogEntry, "exceptionFailure", child)
+            except Exception as e:
+                message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+                self.endProgram( message=message, message_type='problem', child=child )
         else:
-            newLogEntry = screenNameText + "NO PAGE-SLIP FILES TO SEND" + "\n" + "closing session"
+            newLogEntry = screen_name_text + "NO PAGE-SLIP FILES TO SEND" + "\n" + "closing session"
             if(self.debug == "on"):
                 print newLogEntry
             self.endProgram(newLogEntry, "success", child)
 
         # if I get here all was well
-        newLogEntry = screenNameText + "success"
+        newLogEntry = screen_name_text + "success"
         self.log = self.log + "\n" + newLogEntry
         if(self.debug == "on"):
             print newLogEntry
@@ -224,7 +216,7 @@ class FileTransferController( object ):
         # access 'Send print files out of innopac' screen
         #######
 
-        screenNameText = "access 'Send print files out of innopac' screen (2nd time) step - "
+        screen_name_text = "access 'Send print files out of innopac' screen (2nd time) step - "
 
         try:
             child.sendline(prefsInstance.ftpTargetHost)
@@ -232,9 +224,9 @@ class FileTransferController( object ):
             child.sendline(prefsInstance.ftpPassword)
             child.sendline(prefsInstance.ftpDestinationPath)
             option = child.expect(["Transfer completed", "File not transferred"])
-        except:
-            newLogEntry = screenNameText + "FAILURE - (substep A)"
-            self.endProgram(newLogEntry, "exceptionFailure", child)
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
         if( option == 0 ):
             try:
@@ -243,13 +235,13 @@ class FileTransferController( object ):
                 child.expect( "Send print files out of INNOPAC using FTP" )
                 child.expect( "Choose one" )  # Choose one (F,R,Y,Q)
             except:
-                newLogEntry = screenNameText + "FAILURE - (substep B) - but file '" + fileToSendName + "' WAS sent"
+                newLogEntry = screen_name_text + "FAILURE - (substep B) - but file '" + fileToSendName + "' WAS sent"
                 self.endProgram(newLogEntry, "exceptionFailure", child)
 
-            newLogEntry = screenNameText + "success - file sent: " + fileToSendName
+            newLogEntry = screen_name_text + "success - file sent: " + fileToSendName
 
         if( option == 1 ):
-            newLogEntry = screenNameText + "FAILURE: PROBLEM: 'File not transferred"  # I saw this message once when destination server hadn't been configured to accept connections from Josiah's IP address
+            newLogEntry = screen_name_text + "FAILURE: PROBLEM: 'File not transferred"  # I saw this message once when destination server hadn't been configured to accept connections from Josiah's IP address
             newLogEntry = newLogEntry + "\n" + "closing session"
             self.endProgram(newLogEntry, "problem", child)
 
@@ -264,7 +256,7 @@ class FileTransferController( object ):
         # delete existing file -- after confirming that number is still the same
         #######
 
-        screenNameText = "deleting sent file step - "
+        screen_name_text = "deleting sent file step - "
 
         fnDeterminerInstance = NumberDeterminer.NumberDeterminer()
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
@@ -282,16 +274,16 @@ class FileTransferController( object ):
                 child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
                 child.send("y")  # Remove file barttest.p? (y/n)
                 child.expect( "FTP a print file" )  # F > FTP a print file to another system
-            except:
-                newLogEntry = screenNameText + "FAILURE"
-                self.endProgram(newLogEntry, "exceptionFailure", child)
+            except Exception as e:
+                message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+                self.endProgram( message=message, message_type='problem', child=child )
         else:
-            newLogEntry = screenNameText + "FAILURE - fileToDelete '" + fileToDeleteName + "' doesn't match fileSent '" + fileToSendName + "'" + "\n" + "closing session"
+            newLogEntry = screen_name_text + "FAILURE - fileToDelete '" + fileToDeleteName + "' doesn't match fileSent '" + fileToSendName + "'" + "\n" + "closing session"
             if(self.debug == "on"):
                 print newLogEntry
             self.endProgram(newLogEntry, "problem", child)
 
-        newLogEntry = screenNameText + "success"
+        newLogEntry = screen_name_text + "success"
         self.log = self.log + "\n" + newLogEntry
         if( filesToFtpCount > 8 ):
             newLogEntry = "WARNING: the 'files to FTP' list is getting big; ask folk to delete their unused files."
