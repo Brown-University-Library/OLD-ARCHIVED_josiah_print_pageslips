@@ -32,60 +32,6 @@ class DatePrepperTest(unittest.TestCase):
 
 
 
-	def testPrepareTimeStamp_checkKnownTime(self):
-		"""sending a known time to check formatting"""
-		datePrepperInstance = DatePrepper.DatePrepper()
-		datePrepperInstance.timeToFormat = (2005, 7, 13, 13, 41, 39, 2, 194, 1) # 'Wed Jul 13 13:41:39 EDT 2005'
-		expected = "2005-07-13T13-41-39"
-		result = datePrepperInstance.prepareTimeStamp()
-		self.assertEqual(expected, result, "result is: " + str(result))
-
-
-
-	def testObtainOldFileInteger(self):
-		"""Test getting the date integer representing one week ago"""
-
-		import time
-		currentDateInteger = time.time()
-
-		datePrepperInstance = DatePrepper.DatePrepper()
-		oldDateInteger = datePrepperInstance.obtainOldDateInteger()
-
-		secondsInDay = (60*60*24)
-		secondsInWeek = secondsInDay * 7
-		comparisonDateInteger = oldDateInteger + secondsInWeek
-
-		expected = True
-		result = (comparisonDateInteger - currentDateInteger) < 5 # not a great check; manually redoes the function and makes sure the two numbers aren't more than five seconds apart
-		self.assertEqual(expected, result, "result is: " + str(result))
-
-
-
-	def testObtainMiniName_withSentDate(self):
-		"""create name for page-slip save"""
-
-		datePrepperInstance = DatePrepper.DatePrepper()
-
-		datePrepperInstance.timeToFormat = (2005, 8, 2, 9, 5, 39, 2, 194, 1) # 'Wed Aug 2 09:05:39 EDT 2005'
-
-		expected = "jta_aug02_0905"
-		result = datePrepperInstance.obtainMiniName()
-		self.assertEqual( expected, result, "result is: " + str(result) )
-
-
-
-	def testObtainMiniName_withNoSentDate(self):
-		"""create name for page-slip save"""
-
-		datePrepperInstance = DatePrepper.DatePrepper()
-		returnedTime = datePrepperInstance.obtainMiniName()
-
-		expected = len("abc") > 1
-		result = len(returnedTime) > 1
-		self.assertEqual(expected, result, "result is: " + str(result))
-
-
-
 	def testObtainMiniNameTwo_withSentDate(self):
 		"""create name for page-slip save"""
 
