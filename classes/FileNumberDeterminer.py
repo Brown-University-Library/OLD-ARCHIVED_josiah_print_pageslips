@@ -16,43 +16,6 @@ class FileNumberDeterminer:
 
 
 
-#	def determineFileNumber(self, screenText):
-#
-#		# find position of fileName
-#		# backup 5 positions
-#		# capture next 3 characters
-#		# remove possible trailing space
-#		# remove possible preceeding 'H'
-#		# what's left is our number
-#
-#		import string
-#
-#		returnVal = "init"
-#		lengthCheck = "init"
-#
-#		fileIdentifier = "jta_2006"
-#		foundPosition = string.find( screenText, fileIdentifier ) # haystack, needle. Will be -1 if not found
-#
-#		# let's check the file info just to be SURE
-#
-#		if(foundPosition != -1):
-#			self.foundFileName = screenText[foundPosition:foundPosition + 21]
-#
-#			startPosition = foundPosition - 5
-#			textSectionA = screenText[startPosition:startPosition+3]
-#			textSectionB = string.strip(textSectionA) # removes leading and trailing whitespace
-#			if(textSectionB[0:1] == 'H'):
-#				textSectionC = textSectionB[1:]
-#			else:
-#				textSectionC = textSectionB
-#			returnVal = textSectionC
-#		else:
-#			returnVal = "-1"
-#
-#		return returnVal
-
-
-
 	def determineFileNumber(self, screenText):
 
 		# find fileName
@@ -105,6 +68,43 @@ class FileNumberDeterminer:
 			returnVal = textSectionC
 
 		return returnVal
+
+
+
+#   def determineFileNumber(self, screenText):
+#
+#       # find position of fileName
+#       # backup 5 positions
+#       # capture next 3 characters
+#       # remove possible trailing space
+#       # remove possible preceeding 'H'
+#       # what's left is our number
+#
+#       import string
+#
+#       returnVal = "init"
+#       lengthCheck = "init"
+#
+#       fileIdentifier = "jta_2006"
+#       foundPosition = string.find( screenText, fileIdentifier ) # haystack, needle. Will be -1 if not found
+#
+#       # let's check the file info just to be SURE
+#
+#       if(foundPosition != -1):
+#           self.foundFileName = screenText[foundPosition:foundPosition + 21]
+#
+#           startPosition = foundPosition - 5
+#           textSectionA = screenText[startPosition:startPosition+3]
+#           textSectionB = string.strip(textSectionA) # removes leading and trailing whitespace
+#           if(textSectionB[0:1] == 'H'):
+#               textSectionC = textSectionB[1:]
+#           else:
+#               textSectionC = textSectionB
+#           returnVal = textSectionC
+#       else:
+#           returnVal = "-1"
+#
+#       return returnVal
 
 
 
