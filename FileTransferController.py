@@ -126,6 +126,7 @@ class FileTransferController( object ):
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
+        logger.info( '%s - success' % screen_name_text )
 
 
         #######
@@ -140,6 +141,7 @@ class FileTransferController( object ):
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
+        logger.info( '%s - success' % screen_name_text )
 
 
         #######
@@ -156,18 +158,10 @@ class FileTransferController( object ):
             self.endProgram( message=message, message_type='problem', child=child )
 
         if(option == 0):
-            newLogEntry = screen_name_text + "success"
+            logger.info( '%s - success' % screen_name_text )
         if(option == 1):
-            newLogEntry = screen_name_text + "FAILURE: PROBLEM: total size of files in FTP list is too big"
-            newLogEntry = newLogEntry + "\n" + "closing session"
-            if(self.debug == "on"):
-                print newLogEntry
-            self.endProgram(newLogEntry, "problem", child)
-
-        # if I get here all was well
-        self.log = self.log + "\n" + newLogEntry
-        if(self.debug == "on"):
-            print newLogEntry
+            message = '%s - FAILED, problem: total size of files in FTP list is too big' % screen_name_text )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
@@ -183,12 +177,10 @@ class FileTransferController( object ):
         #######
 
         screen_name_text = "access 'Innopac file transfer' screen step - "
-
         fnDeterminerInstance = NumberDeterminer.NumberDeterminer()
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterString = fnDeterminerInstance.determineFileNumber(textToExamine)
         fileToSendName = fnDeterminerInstance.foundFileName
-
         if(numberToEnterString != "-1"):  # means a legit file was found
             try:
                 child.send("F")  # F > FTP a print file to another system
@@ -198,18 +190,11 @@ class FileTransferController( object ):
             except Exception as e:
                 message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
+            logger.info( '%s - success' % screen_name_text )
         else:
-            newLogEntry = screen_name_text + "NO PAGE-SLIP FILES TO SEND" + "\n" + "closing session"
-            if(self.debug == "on"):
-                print newLogEntry
-            self.endProgram(newLogEntry, "success", child)
-
-        # if I get here all was well
-        newLogEntry = screen_name_text + "success"
-        self.log = self.log + "\n" + newLogEntry
-        if(self.debug == "on"):
-            print newLogEntry
-
+            message = '%s - success, NO PAGE-SLIP FILES TO SEND; closing session' % screen_name_text
+            logger.info( '%s - success' % message )
+            self.endProgram( message=message, message_type='success', child=child )
 
 
         #######
@@ -235,21 +220,13 @@ class FileTransferController( object ):
                 child.expect( "Send print files out of INNOPAC using FTP" )
                 child.expect( "Choose one" )  # Choose one (F,R,Y,Q)
             except:
-                newLogEntry = screen_name_text + "FAILURE - (substep B) - but file '" + fileToSendName + "' WAS sent"
-                self.endProgram(newLogEntry, "exceptionFailure", child)
-
-            newLogEntry = screen_name_text + "success - file sent: " + fileToSendName
+                message = '%s - FAILURE - (substep B) - but file `%s` WAS sent; closing session' % ( screen_name_text, fileToSendName )
+                self.endProgram( message=message, message_type='problem', child=child )
+            logger.info( '%s - success - file `%s` sent' % (screen_name_text, fileToSendName) )
 
         if( option == 1 ):
-            newLogEntry = screen_name_text + "FAILURE: PROBLEM: 'File not transferred"  # I saw this message once when destination server hadn't been configured to accept connections from Josiah's IP address
-            newLogEntry = newLogEntry + "\n" + "closing session"
-            self.endProgram(newLogEntry, "problem", child)
-
-        # if I get here all was well
-        self.log = self.log + "\n" + newLogEntry
-        if(self.debug == "on"):
-            print newLogEntry
-
+            message = '%s - FAILURE - (substep B) - file `%s` was NOT transferred; closing session' % ( screen_name_text, fileToSendName )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
@@ -262,10 +239,8 @@ class FileTransferController( object ):
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterStringChecked = fnDeterminerInstance.determineFileNumber(textToExamine)
         fileToDeleteName = fnDeterminerInstance.foundFileName
-
-        # also get number of files for possible extra alert message
+        ## also get number of files for possible extra alert message
         filesToFtpCount = fnDeterminerInstance.determineFileCount(textToExamine)
-
         if( fileToDeleteName == fileToSendName ):
             try:
                 child.send("R")  # R > REMOVE files
@@ -277,38 +252,32 @@ class FileTransferController( object ):
             except Exception as e:
                 message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
+            logger.info( '%s - success' % screen_name_text )
         else:
-            newLogEntry = screen_name_text + "FAILURE - fileToDelete '" + fileToDeleteName + "' doesn't match fileSent '" + fileToSendName + "'" + "\n" + "closing session"
-            if(self.debug == "on"):
-                print newLogEntry
-            self.endProgram(newLogEntry, "problem", child)
+            message = '%s - FAILURE - fileToDeleteName `%s` doesn\'t match name-of-file-sent `%s`; closing session' % ( screen_name_text, fileToDeleteName, fileToSendName )
+            self.endProgram( message=message, message_type='problem', child=child )
 
-        newLogEntry = screen_name_text + "success"
-        self.log = self.log + "\n" + newLogEntry
+
+        #######
+        # check size of FTP list
+        #######
+
         if( filesToFtpCount > 8 ):
-            newLogEntry = "WARNING: the 'files to FTP' list is getting big; ask folk to delete their unused files."
-            self.log = self.log + "\n\n" + newLogEntry + "\n"
-        if(self.debug == "on"):
-            print newLogEntry
-
+            message = 'WARNING - file transferred fine, but the `files to FTP` list is getting big; ask folk to delete their unused files.'
+            subject = 'josiah-pageslip transfer warning'
+            m = Mailer( subject, message )
+            m.send_email()
 
 
         #######
         # close
         #######
 
-        newLogEntry = "closing session"
-        if(self.debug == "on"):
-            print newLogEntry
-            print ""
-            print "My pid:"
-            print str(child.pid)
-            print ""
+        logger.info( 'closing session; pid, `%s`' % unicode(child.pid) )
+        sys.stdout.flush()
+        self.endProgram( message='closing session', message_type='success', child=child )
 
-        if(self.debug == "on"):
-            sys.stdout.flush()
-
-        self.endProgram(newLogEntry, "success", child)
+        # end def runCode()
 
 
     def endProgram( self, message, message_type, child ):
@@ -319,12 +288,15 @@ class FileTransferController( object ):
         logger.debug( 'message, `%s`' % message )
         logger.debug( 'message_type, `%s`' % message_type )
         logger.debug( 'child, `%s`' % child )
+        logger.debug( 'type(child.pid), `%s`' % type(child.pid) )
+        logger.debug( 'child.pid, `%s`' % unicode(repr(child.pid)) )
 
         if child == None:  # happens on failed connection
             logger.info( 'no pexpect child' )
         else:
             try:
-                os.popen( 'kill -9 ' + str(child.pid) )
+                command = 'kill -9 %s' % child.pid
+                os.popen( command.encode('utf-8') )
                 logger.debug( 'script process successfully ended' )
             except Exception as e:
                 logger.error( 'Problem killing process, exception, `%s`' % unicode(repr(e)) )
@@ -338,44 +310,7 @@ class FileTransferController( object ):
 
         sys.exit()
 
-
-    # def endProgram(self, newLogEntry, message, child):
-
-    #     import os
-    #     import sys
-    #     import DatePrepper
-    #     import Emailer
-    #     import Prefs
-
-    #     datePrepperInstance = DatePrepper.DatePrepper()
-    #     emailerInstance = Emailer.Emailer()
-    #     prefsInstance = Prefs.Prefs()
-
-    #     os.popen( "kill -9 " + str(child.pid) )
-
-    #     self.log = self.log + "\n" + newLogEntry
-    #     if( message == "exceptionFailure"):
-    #         errorMessage = "---"  + "\n"
-    #         errorMessage = errorMessage + "Error - info start:" + "\n"
-    #         errorMessage = errorMessage + str(child) + "\n"
-    #         errorMessage = errorMessage + "" + "\n"
-    #         errorMessage = errorMessage + str(child.before) + "\n"
-    #         errorMessage = errorMessage + "Error - info end." + "\n"
-    #         errorMessage = errorMessage + "---"
-    #         self.log = self.log + "\n" + errorMessage
-
-    #     dateAndTimeText = datePrepperInstance.obtain_date()
-    #     self.log = self.log + "\n\n" + "Automated ssh session ending at " + dateAndTimeText
-    #     self.log = self.log + "\n\n" + "-------"
-
-    #     print self.log
-
-    #     message = self.log
-    #     emailerInstance.headerSubject = prefsInstance.headerSubject_fileTransfer
-    #     emailerInstance.sendEmail(message)
-
-    #     sys.exit()
-
+        # end def endProgram()
 
 
 if __name__ == "__main__":
