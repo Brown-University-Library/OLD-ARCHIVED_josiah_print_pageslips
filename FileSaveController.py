@@ -311,7 +311,7 @@ class FileSaveController( object ):
         # close
         #######
 
-        logger.info( 'closing session; pid, `%s`' % str(child.pid) )
+        logger.info( 'closing session; pid, `%s`' % unicode(child.pid) )
         sys.stdout.flush()
         self.endProgram( message='closing session', message_type='success', child=child )
 
@@ -331,7 +331,8 @@ class FileSaveController( object ):
             logger.info( 'no pexpect child' )
         else:
             try:
-                os.popen( 'kill -9 ' + str(child.pid) )
+                command = 'kill -9 %s' % child.pid
+                os.popen( command.encode('utf-8') )
                 logger.debug( 'script process successfully ended' )
             except Exception as e:
                 logger.error( 'Problem killing process, exception, `%s`' % unicode(repr(e)) )
