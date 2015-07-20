@@ -4,8 +4,8 @@ Part of Josiah-to-Las_Josiah code.
 
 from __future__ import unicode_literals
 
-import NumberDeterminer
 import unittest
+from josiah_print_pageslips.classes import NumberDeterminer
 
 
 class NumberDeterminerTest(unittest.TestCase):

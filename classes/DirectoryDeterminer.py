@@ -1,24 +1,15 @@
 # -*- coding: utf-8 -*-
 
-"""
-DirectoryDeterminer.py
-"""
-
 from __future__ import unicode_literals
 
 
-class DirectoryDeterminer:
-
-
+class DirectoryDeterminer( object ):
 
 	def determineEnclosingDirectory(self, path):
-		# assumes path doesn't end with a "/", i.e., determined by os.path.abspath('')
-		lastSlashPosition = path.rfind("/")
+		lastSlashPosition = path.rfind("/")  # assumes path doesn't end with a "/", i.e., determined by os.path.abspath('')
 		buffer = path[0:lastSlashPosition]
 		enclosingDirectory = buffer + "/" # I want the slash for a sys.path.append
 		return enclosingDirectory
-
-
 
 	def determineRunningScript(self, path):
 		lastSlashPosition = path.rfind("/")
@@ -26,6 +17,4 @@ class DirectoryDeterminer:
 		scriptName = path[startPosition:]
 		return scriptName
 
-
-
-# bottom
+    # end class DirectoryDeterminer

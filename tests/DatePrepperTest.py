@@ -4,9 +4,8 @@ Part of LAS-to-Josiah code.
 
 from __future__ import unicode_literals
 
-import DatePrepper
 import unittest
-
+from josiah_print_pageslips.classes import DatePrepper
 
 
 class DatePrepperTest(unittest.TestCase):

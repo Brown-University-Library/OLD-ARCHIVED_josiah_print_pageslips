@@ -1,148 +1,109 @@
 # -*- coding: utf-8 -*-
 
-'''
-Part of Josiah-to-Annex Telnet code.
-Manage export of Annex requests to Annex server.
-'''
+"""
+Manages export of iii-millennium pageslips to Annex server.
+- Part 2 of 2 of Josiah-to-Annex Telnet code.
+- Assumes:
+  - virtual environment set up
+  - site-packages `requirements.pth` file adds josiah_print_pageslips enclosing-directory to sys path.
+"""
 
 from __future__ import unicode_literals
 
+import logging, os
+import pexpect
 
-class FileTransferController:
+
+## instances
+from josiah_print_pageslips.classes.DatePrepper import DatePrepper
+from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
+
+
+## settings from env/activate
+LOG_PATH = os.environ['PGSLP__LOG_PATH']
+LOG_LEVEL = os.environ['PGSLP__LOG_LEVEL']  # 'DEBUG' or 'INFO'
+
+
+## log config
+log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    # filename=LOG_PATH, level=log_level[LOG_LEVEL],
+    filename=LOG_PATH, level=log_level[LOG_LEVEL],
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S'
+    )
+logger = logging.getLogger(__name__)
 
 
 
-	log = ""
-	debug = "off"  # "on", "off"
+class FileTransferController( object ):
 
+
+    def __init__( self ):
+        self.ssh_target_host = os.environ['PGSLP__SSH_TARGET_HOST']
+        self.login_name = os.environ['PGSLP__LOGIN_NAME']
+        self.login_password = os.environ['PGSLP__LOGIN_PASSWORD']
+        self.initials_name = os.environ['PGSLP__INITIALS_NAME']
+        self.initials_password = os.environ['PGSLP__INITIALS_PASSWORD']
 
 
 	def runCode(self):
 
-		#######
-		# setup environment
-		#######
+        logger.info( 'starting run_code()' )
 
-		import os
-		import sys
+        #######
+        # setup environment
+        #######
 
-		try:
-			os.chdir("zz")  # worf: to handle production server cron call
-		except:
-			pass
-		mainDirectoryPath = os.path.abspath('')
-
-		newLogEntry = "mainDirectoryPath: " + str(mainDirectoryPath)
-		if(self.debug == "on"):
-			print "debug starts"  # for live step-by-step output
-			self.log = self.log + "\n" + "debug starts"  # to also include in actual log
-#			self.log = self.log + "\n" + newLogEntry
-#			print newLogEntry
-
-		sys.path.append(mainDirectoryPath + '/libraries/pexpect-2.0/')
-		sys.path.append(mainDirectoryPath + '/classes/')
-
-#		newLogEntry = "updated sys.path: " + str(sys.path)
-#		if(self.debug == "on"):
-#			self.log = self.log + "\n" + newLogEntry
-#			print newLogEntry
-
-		import DirectoryDeterminer # to get reference to enclosing folder for import of PrivatePrefs
-		ddInstance = DirectoryDeterminer.DirectoryDeterminer()
-		enclosingDirectoryPath = ddInstance.determineEnclosingDirectory(mainDirectoryPath)
-		sys.path.append(enclosingDirectoryPath)
-
-		import pexpect
-		import DatePrepper
-		import NumberDeterminer
-		import Prefs # Prefs constructor loads PrivatePrefs
-
-		# now that I have a reference to DatePrepper, I can set up the log heading
-		datePrepperInstance = DatePrepper.DatePrepper()
-		dateAndTimeText = datePrepperInstance.obtainDate()
-		self.log = "Automated ssh session starting at " + dateAndTimeText + "\n" + self.log
-		self.log = "\n" + "-------" + "\n\n" + self.log
-
-		newLogEntry = "setup complete"
-		if(self.debug == "on"):
-			self.log = self.log + "\n" + newLogEntry
-			print newLogEntry
-
-
-
-		#######
-		# load preferences
-		#######
-
-		prefsInstance = Prefs.Prefs()
-		sshTargetHost = prefsInstance.sshTargetHost
-		loginName = prefsInstance.loginName
-		loginPassword = prefsInstance.loginPassword
-		initialsName = prefsInstance.initialsName
-		initialsPassword = prefsInstance.initialsPassword
-
-		newLogEntry = "prefs loaded"
-		if(self.debug == "on"):
-			self.log = self.log + "\n" + newLogEntry
-			print newLogEntry
-
+        dateAndTimeText = date_prepper.obtainDate()
+        logger.info( 'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
 		#######
 		# connect
 		#######
 
-		try:
-			child = pexpect.spawn('ssh ' + loginName + "@" + sshTargetHost)
-			if(self.debug == "on"):
-				child.logfile = sys.stdout
-			child.delaybeforesend = .5
-		except:
-			newLogEntry = "connect via ssh FAILED"
-			self.endProgram(newLogEntry, "exceptionFailure", child)
-
-		newLogEntry = "connect via ssh step - success"
-		self.log = self.log + "\n" + newLogEntry
-		if(self.debug == "on"):
-			print newLogEntry
+        child = None
+        try:
+            child = pexpect.spawn('ssh ' + self.login_name + "@" + self.ssh_target_host)
+            if( LOG_LEVEL == 'DEBUG' ):
+                child.logfile = sys.stdout
+            child.delaybeforesend = .5
+            logger.info( 'connect via ssh step - success' )
+        except Exception as e:
+            message = 'connect via ssh FAILED, exception, `%s`' % unicode(repr(e))
+            logger.error( message )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
+        #######
+        # authenticate
+        #######
+
+        try:
+            child.expect('password: ')
+            child.sendline( self.login_password )
+            logger.info( 'login step - success' )
+        except Exception as e:
+            message = 'Login step FAILED, exception, `%s`' % unicode(repr(e))
+            logger.error( message )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
-		#######
-		# authenticate
-		#######
+        #######
+        # access *** MAIN MENU ***
+        #######
 
-		try:
-			child.expect('password: ')
-			child.sendline( loginPassword )
-		except:
-			newLogEntry = "Login step FAILED"
-			self.endProgram(newLogEntry, "exceptionFailure", child)
-
-		newLogEntry = 'login step - success'
-		self.log = self.log + "\n" + newLogEntry
-		if(self.debug == "on"):
-			print newLogEntry
+        screen_name_text = "access 'Main menu' screen step"
+        try:
+            child.expect('Choose one')  # "Choose one (S,D,C,M,A,Q)"
+            logger.info( '%s - success' % screen_name_text )
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
 
 
-
-		#######
-		# access *** MAIN MENU ***
-		#######
-
-		screenNameText = "access 'Main menu' screen step - "
-		try:
-			child.expect('Choose one')  # "Choose one (S,D,C,M,A,Q)"
-			newLogEntry = screenNameText + "success"
-		except:
-			newLogEntry = screenNameText + "FAILURE"
-			self.endProgram(newLogEntry, "exceptionFailure", child)
-
-		self.log = self.log + "\n" + newLogEntry
-		if(self.debug == "on"):
-			print newLogEntry
-
+        1/0
 
 
 		#######

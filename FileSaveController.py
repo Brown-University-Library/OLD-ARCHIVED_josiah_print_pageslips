@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Manages export of Annex requests to Annex server.
-- Part of Josiah-to-Annex Telnet code.
+Manages creation of iii-millennium pageslips for Annex-requests.
+- Part 1 of 2 of Josiah-to-Annex Telnet code.
 - Assumes:
   - virtual environment set up
   - site-packages `requirements.pth` file adds josiah_print_pageslips enclosing-directory to sys path.
@@ -15,7 +15,6 @@ import pexpect
 from josiah_print_pageslips.classes.Emailer import Mailer
 from josiah_print_pageslips.classes.DatePrepper import DatePrepper
 from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
-
 
 
 ## instances
@@ -44,7 +43,6 @@ class FileSaveController( object ):
 
 
     def __init__( self ):
-        # self.PATH_ADDITIONS = json.loads( os.environ['PGSLP__PATH_ADDITIONS_JSON'] )
         self.ssh_target_host = os.environ['PGSLP__SSH_TARGET_HOST']
         self.login_name = os.environ['PGSLP__LOGIN_NAME']
         self.login_password = os.environ['PGSLP__LOGIN_PASSWORD']
@@ -114,7 +112,11 @@ class FileSaveController( object ):
 
         screen_name_text = "access 'Circulation' screen step"
         try:
+
+
             1/0
+
+
             child.send('C')  # "C > CIRCULATION subsystem"
             child.expect("key your initials")
             child.sendline(initials_name)
