@@ -4,7 +4,7 @@
 
 from __future__ import unicode_literals
 
-import json, logging, os, smtplib
+import json, logging, os, pprint, smtplib
 from email.Header import Header
 from email.mime.text import MIMEText
 
@@ -28,15 +28,17 @@ class Mailer( object ):
     def send_email( self ):
         """ Sends email. """
         try:
-            TO = self._build_mail_to()  # utf-8
+            TO = self._build_mail_to()  # list of utf-8 entries
             MESSAGE = self.UNICODE_MESSAGE.encode( 'utf-8', 'replace' )  # utf-8
             payload = self._assemble_payload( TO, MESSAGE )
             s = smtplib.SMTP( self.UTF8_SMTP_SERVER )
             s.sendmail( self.UTF8_FROM_REAL, TO, payload.as_string() )
             s.quit()
+            log.debug( 'mail sent' )
+            return True
         except Exception as e:
             log.error( 'problem sending mail, exception, `%s`' % unicode(repr(e)) )
-        return
+            return False
 
     def _build_mail_to( self ):
         """ Builds and returns 'to' list of email addresses.
@@ -55,7 +57,6 @@ class Mailer( object ):
         payload['From'] = self.UTF8_FROM_HEADER
         payload['Subject'] = Header( self.UNICODE_SUBJECT, 'utf-8' )  # SUBJECT must be unicode
         payload['Reply-to'] = self.UTF8_REPLY_TO_HEADER
-        log.debug( 'payload, `%s`' % payload.as_string() )
         return payload
 
     # end class Mailer
