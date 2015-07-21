@@ -14,12 +14,14 @@ import json, logging, os, pprint, sys
 import pexpect
 from josiah_print_pageslips.classes.Emailer import Mailer
 from josiah_print_pageslips.classes.DatePrepper import DatePrepper
-from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
+from josiah_print_pageslips.classes.SaveHelper import SaveHelper
+# from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
 
 
 ## instances
 date_prepper = DatePrepper()
-number_determiner = NumberDeterminer()
+save_helper = SaveHelper()
+# number_determiner = NumberDeterminer()
 
 
 ## settings from env/activate
@@ -303,8 +305,10 @@ class FileSaveController( object ):
             message = '%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
-        number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
-        logger.info( '%s - success, %s' % (screen_name_text, number_determiner.noticesPrintedText) )
+        # number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
+        # logger.info( '%s - success, %s' % (screen_name_text, number_determiner.noticesPrintedText) )
+        pageslips_count = save_helper.count_pageslips( textToExamineForNoticesNumber )
+        logger.info( '%s - success - pageslips printed: %s' % (screen_name_text, pageslips_count) )
 
 
         #######
