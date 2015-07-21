@@ -6,53 +6,36 @@ Helpers for FileSaveController.py
 
 from __future__ import unicode_literals
 
-import json, logging, os, pprint, sys
+import logging
+
+
+log = logging.getLogger(__name__)
 
 
 class SaveHelper( object ):
 
-    def count_pageslips(self, screenText):
+    def count_pageslips( self, screen_text ):
+        """ Returns count of pageslips printed.
+            Called by FileSaveController.run_code() """
+        notices_position = self._find_notices_segment( screen_text )
+        if not notices_position:
+            return '0'
+        segment = screen_text[ notices_position-10: notices_position ]
+        initial_position = segment.find( '[15;6H' )
+        count_string_start = initial_position + 6
+        count_string = segment[ count_string_start: ]
+        log.debug( 'count_string, `%s`' % count_string )
+        return count_string
 
-        # issue: key screenText substring can be *either* 'notices' or 'notice.
-
-        import string
-
-        returnVal = "init"
-
-        # find position of ' notices printed.' text, *or* ' notice printed.' text.
-        foundPosition = "init"
-        noticesPosition = string.find( screenText, " notices printed." ) # haystack, needle. Will be -1 if not found
-        noticePosition = string.find( screenText, " notice printed." ) # haystack, needle. Will be -1 if not found
-
-        if(noticesPosition > -1):
-            foundPosition = noticesPosition
+    def _find_notices_segment( self, screen_text ):
+        """ Returns position of " notices printed." or " notice printed."
+            Called by count_pageslips() """
+        notices_position = screen_text.find( ' notices printed' )
+        if notices_position == -1:
+            notices_position = screen_text.find( ' notice printed' )
+        if notices_position == -1:
+            return False
         else:
-            if(noticePosition > -1):
-                foundPosition = noticePosition
-
-        if(foundPosition != "init"):
-            # backup 10 spaces (too much, but no problem), and create a 10-character segment.
-            segment1start = foundPosition - 10
-            segment1end = foundPosition
-            segment1 = screenText[segment1start:segment1end]
-
-            # find the start position of the text '[15;6H' and reduce the sement to start after the 'H'. This is our number.
-            foundPosition2 = string.find(segment1, "[15;6H")
-
-            if(foundPosition > -1):
-                segment2start = foundPosition2 + 6
-                segment2 = segment1[segment2start:]
-                returnVal = segment2
-                if( returnVal == "1" ):
-                    self.noticesPrintedText = "1 notice printed"
-                else:
-                    self.noticesPrintedText = returnVal + " notices printed"
-            else:
-                returnVal = "noNumFound"
-
-        else:
-            returnVal = "noNumFound"
-
-        return returnVal
+            return notices_position
 
     # end class SaveHelper
