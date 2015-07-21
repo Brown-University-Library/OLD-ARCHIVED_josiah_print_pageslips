@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-"""
-Obtains date in needed formats.
-"""
+""" Obtains date in needed formats.
+    Called by both FileSaveController.py and FileTransferController.py """
 
 from __future__ import unicode_literals
 

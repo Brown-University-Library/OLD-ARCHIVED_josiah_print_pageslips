@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-""" Unicode-friendly emailer. """
+""" Unicode-friendly emailer.
+    Called by both FileSaveController.py and FileTransferController.py """
 
 from __future__ import unicode_literals
 
