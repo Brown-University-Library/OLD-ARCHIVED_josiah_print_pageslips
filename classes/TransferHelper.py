@@ -10,6 +10,85 @@ import logging, re
 log = logging.getLogger(__name__)
 
 
+class FileCounter( object ):
+
+    def __init__( self ):
+        self.regexPattern = """
+            (;1H)       # prefix
+            [0-9]       # targetNumber
+            [ ][>][ ]   # suffix
+            """
+
+    def count_ftp_list_files( self, screen_text ):
+        """ Determines count of files in ftp list.
+            Called by FileTransferController.run_code() to determine whether to alert admins that ftp-list is getting too large.
+            Flow...
+            - find pattern in screenText
+            - store that number
+            - delete all text up to and including this find.
+            - look again.
+            - if found, store number and repeat until no more finds occur.
+            - at this point, the stored number is the count. """
+        # find pattern in screen text
+        textToProcess = screen_text
+        highestNumber = 0
+        loopFlag = "continue"
+        while( loopFlag == "continue" ):
+            searchResult = re.search( self.regexPattern, textToProcess, re.VERBOSE )
+            if searchResult == None:
+                break
+            else:
+                foundText = searchResult.group()
+                highestNumber = foundText[3:4]  # store the number
+                # delete all text up to and including this find.
+                foundTextStartPosition = textToProcess.find( foundText )  # -1 if not found
+                foundTextLength = len(foundText)
+                textToProcess = textToProcess[foundTextStartPosition + foundTextLength:]
+        returnVal = int(highestNumber)
+        return returnVal
+
+
+
+    # def count_ftp_list_files( self, screen_text ):
+    #     # find pattern in screenText
+    #     # store that number
+    #     # delete all text up to and including this find.
+    #     # look again.
+    #     # if found, store number and repeat until no more finds occur.
+    #     # at this point, the stored number is the count.
+
+    #     import re
+    #     import string
+
+    #     # find pattern in screen text
+    #     regexPattern = """
+    #         (;1H)       # prefix
+    #         [0-9]       # targetNumber
+    #         [ ][>][ ]   # suffix
+    #         """
+    #     textToProcess = screen_text
+    #     highestNumber = 0
+    #     loopFlag = "continue"
+    #     while( loopFlag == "continue" ):
+    #         searchResult = re.search(regexPattern, textToProcess, re.VERBOSE)
+    #         if( searchResult == None):
+    #             break
+    #         else:
+    #             foundText = searchResult.group()
+    #             #store the number
+    #             highestNumber = foundText[3:4]
+    #             # delete all text up to and including this find.
+    #             foundTextStartPosition = string.find( textToProcess, foundText ) # haystack, needle. Will be -1 if not found
+    #             foundTextLength = len(foundText)
+    #             textToProcess = textToProcess[foundTextStartPosition + foundTextLength:]
+
+    #     # at this point, the stored number is the count
+    #     returnVal = int(highestNumber)
+    #     return returnVal
+
+    # end class FileCounter
+
+
 class FileNumberGrabber( object ):
 
     def __init__( self ):
