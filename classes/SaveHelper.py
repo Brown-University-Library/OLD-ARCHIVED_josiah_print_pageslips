@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
-Helpers for FileSaveController.py
-"""
+""" Contains helpers for FileSaveController.py """
 
 from __future__ import unicode_literals
 
@@ -12,7 +10,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class SaveHelper( object ):
+class PageslipCounter( object ):
 
     def count_pageslips( self, screen_text ):
         """ Returns count of pageslips printed.
