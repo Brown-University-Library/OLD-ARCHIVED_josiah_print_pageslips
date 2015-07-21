@@ -4,7 +4,7 @@
 
 from __future__ import unicode_literals
 
-import logging
+import logging, re, string
 
 
 log = logging.getLogger(__name__)
@@ -13,51 +13,27 @@ log = logging.getLogger(__name__)
 class FileNumberGrabber( object ):
 
     def __init__( self ):
-        self.found_file_name = None
+        self.found_file_name = ''
 
     def grab_file_number( self, screen_text ):
         """ Grabs the integer representing the file to FTP to the LAS server.
-            Called by FileTransferController.run_code() """
-        # find fileName
-        # find position of fileName
-        # backup 5 positions
-        # capture next 3 characters
-        # remove possible trailing space
-        # remove possible preceeding 'H'
-        # what's left is our number
-
-        import re
-        import string
-
-        # find fileName
-
-        regexPattern = """
-            (jta_20)            # initial prefix
-            [0-9][0-9]      # rest of year
-            [0-9][0-9]      # month
-            [0-9][0-9]      # day
-            (_)             # separator
-            [0-9][0-9]      # hour
-            [0-9][0-9]      # minute
-            [0-9][0-9]      # second
-            (\.)(p)         # suffix
-            """
-
-        searchResult = re.search(regexPattern, screen_text, re.VERBOSE)
-
-        fileName = "init"
-        returnVal = "init"
-
-        if( searchResult == None):
-            returnVal = "-1"
-        else:
-            fileName = searchResult.group()
-            self.found_file_name = fileName
+            Called by FileTransferController.run_code()
+            Flow...
+            - find fileName
+            - find position of fileName
+            - backup 5 positions
+            - capture next 3 characters
+            - remove possible trailing space
+            - remove possible preceeding 'H'
+            - what's left is our number """
+        self.found_file_name = self._find_file_name( screen_text )
+        if not self.found_file_name:
+            return '-1'
 
         # find position of fileName and deduce fileName number
 
         if( returnVal != "-1" ):
-            foundFileNamePosition = string.find( screen_text, fileName )
+            foundFileNamePosition = string.find( screen_text, self.found_file_name )
             numberStartPosition = foundFileNamePosition - 5
             textSectionA = screen_text[numberStartPosition:numberStartPosition+3]
             textSectionB = string.strip(textSectionA)  # removes leading and trailing whitespace
@@ -69,12 +45,29 @@ class FileNumberGrabber( object ):
 
         return returnVal
 
-    # end class FileNumberGrabber
+    def _find_file_name( self, screen_text ):
+        """ Searches for filename by regex & sets it.
+            Called by grab_file_number() """
+        regexPattern = """
+            (jta_20)            # initial prefix
+            [0-9][0-9]      # rest of year
+            [0-9][0-9]      # month
+            [0-9][0-9]      # day
+            (_)             # separator
+            [0-9][0-9]      # hour
+            [0-9][0-9]      # minute
+            [0-9][0-9]      # second
+            (\.)(p)         # suffix
+            """
+        searchResult = re.search(regexPattern, screen_text, re.VERBOSE)
+        if searchResult:
+            self.found_file_name = searchResult.group()
+        return self.found_file_name
 
 
-
-    # def determineFileNumber(self, screenText):
-
+    # def grab_file_number( self, screen_text ):
+    #     """ Grabs the integer representing the file to FTP to the LAS server.
+    #         Called by FileTransferController.run_code() """
     #     # find fileName
     #     # find position of fileName
     #     # backup 5 positions
@@ -100,7 +93,7 @@ class FileNumberGrabber( object ):
     #         (\.)(p)         # suffix
     #         """
 
-    #     searchResult = re.search(regexPattern, screenText, re.VERBOSE)
+    #     searchResult = re.search(regexPattern, screen_text, re.VERBOSE)
 
     #     fileName = "init"
     #     returnVal = "init"
@@ -109,14 +102,14 @@ class FileNumberGrabber( object ):
     #         returnVal = "-1"
     #     else:
     #         fileName = searchResult.group()
-    #         self.foundFileName = fileName
+    #         self.found_file_name = fileName
 
     #     # find position of fileName and deduce fileName number
 
     #     if( returnVal != "-1" ):
-    #         foundFileNamePosition = string.find( screenText, fileName )
+    #         foundFileNamePosition = string.find( screen_text, fileName )
     #         numberStartPosition = foundFileNamePosition - 5
-    #         textSectionA = screenText[numberStartPosition:numberStartPosition+3]
+    #         textSectionA = screen_text[numberStartPosition:numberStartPosition+3]
     #         textSectionB = string.strip(textSectionA)  # removes leading and trailing whitespace
     #         if(textSectionB[0:1] == 'H'):  # removes possible 'H' character
     #             textSectionC = textSectionB[1:]
@@ -125,3 +118,5 @@ class FileNumberGrabber( object ):
     #         returnVal = textSectionC
 
     #     return returnVal
+
+    # end class FileNumberGrabber
