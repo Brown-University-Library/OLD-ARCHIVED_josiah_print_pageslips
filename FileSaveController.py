@@ -15,13 +15,11 @@ import pexpect
 from josiah_print_pageslips.classes.Emailer import Mailer
 from josiah_print_pageslips.classes.DatePrepper import DatePrepper
 from josiah_print_pageslips.classes.SaveHelper import SaveHelper
-# from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
 
 
 ## instances
 date_prepper = DatePrepper()
 save_helper = SaveHelper()
-# number_determiner = NumberDeterminer()
 
 
 ## settings from env/activate
