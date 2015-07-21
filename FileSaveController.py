@@ -305,8 +305,6 @@ class FileSaveController( object ):
             message = '%s - FAILED, exception, `%s`' % ( substep_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
-        # number_determiner.figureNoticesNumber(textToExamineForNoticesNumber)
-        # logger.info( '%s - success, %s' % (screen_name_text, number_determiner.noticesPrintedText) )
         pageslips_count = save_helper.count_pageslips( textToExamineForNoticesNumber )
         logger.info( '%s - success - pageslips printed: %s' % (screen_name_text, pageslips_count) )
 
