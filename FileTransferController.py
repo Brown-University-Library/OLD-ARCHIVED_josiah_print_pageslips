@@ -15,12 +15,10 @@ import pexpect
 from josiah_print_pageslips.classes.Emailer import Mailer
 from josiah_print_pageslips.classes.DatePrepper import DatePrepper
 from josiah_print_pageslips.classes.TransferHelper import FileNumberGrabber, FileCounter
-# from josiah_print_pageslips.classes.NumberDeterminer import NumberDeterminer
 
 
 ## instances
 date_prepper = DatePrepper()
-# number_determiner = NumberDeterminer()
 file_number_grabber = FileNumberGrabber()
 file_counter = FileCounter()
 
@@ -180,11 +178,8 @@ class FileTransferController( object ):
         #######
 
         screen_name_text = "access 'Innopac file transfer' screen step - "
-        # fnDeterminerInstance = NumberDeterminer.NumberDeterminer()
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
-        # numberToEnterString = fnDeterminerInstance.determineFileNumber(textToExamine)
         numberToEnterString = file_number_grabber.grab_file_number( textToExamine )
-        # fileToSendName = fnDeterminerInstance.foundFileName
         fileToSendName = file_number_grabber.found_file_name
         if(numberToEnterString != "-1"):  # means a legit file was found
             try:
@@ -240,14 +235,10 @@ class FileTransferController( object ):
 
         screen_name_text = "deleting sent file step - "
 
-        # fnDeterminerInstance = NumberDeterminer.NumberDeterminer()
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
-        # numberToEnterStringChecked = fnDeterminerInstance.determineFileNumber(textToExamine)
         numberToEnterStringChecked = file_number_grabber.grab_file_number( textToExamine )
-        # fileToDeleteName = fnDeterminerInstance.foundFileName
         fileToDeleteName = file_number_grabber.found_file_name
         ## also get number of files for possible extra alert message
-        # filesToFtpCount = fnDeterminerInstance.determineFileCount(textToExamine)
         filesToFtpCount = file_counter.count_ftp_list_files( textToExamine )
         if( fileToDeleteName == fileToSendName ):
             try:

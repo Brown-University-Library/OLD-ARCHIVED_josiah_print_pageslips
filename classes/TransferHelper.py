@@ -61,6 +61,7 @@ class FileNumberGrabber( object ):
 
     def grab_file_number( self, screen_text ):
         """ Grabs the integer representing the file to FTP to the LAS server.
+            Example string: `2 > jta_20060329_134110.p`
             Called by FileTransferController.run_code()
             Flow...
             - find fileName
