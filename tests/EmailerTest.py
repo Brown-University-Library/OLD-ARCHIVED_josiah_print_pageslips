@@ -27,15 +27,6 @@ logger = logging.getLogger(__name__)
 
 class EmailerTest( unittest.TestCase ):
 
-    def testSendEmail_simple_text(self):
-        """ Tests send with basic text. (Really sends!) """
-        subject = 'test subject'
-        message = 'test message'
-        self.assertEqual( unicode, type(subject) )
-        self.assertEqual( unicode, type(message) )
-        emailerInstance = Emailer.Mailer( subject, message )
-        self.assertEqual( True, emailerInstance.send_email() )
-
     def testSendEmail_unicode_text(self):
         """ Tests send with complex unicode subject and message. (Really sends!) """
         subject = 'tést_subject'
