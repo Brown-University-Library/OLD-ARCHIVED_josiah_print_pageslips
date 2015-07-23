@@ -13,78 +13,43 @@ log = logging.getLogger(__name__)
 class FileCounter( object ):
 
     def __init__( self ):
-        self.regexPattern = """
+        self.regex_pattern = """
             (;1H)       # prefix
             [0-9]       # targetNumber
             [ ][>][ ]   # suffix
             """
+        self.highestNumber = 0
 
     def count_ftp_list_files( self, screen_text ):
         """ Determines count of files in ftp list.
             Called by FileTransferController.run_code() to determine whether to alert admins that ftp-list is getting too large.
             Flow...
-            - find pattern in screenText
+            - find pattern in screen_text
             - store that number
             - delete all text up to and including this find.
             - look again.
             - if found, store number and repeat until no more finds occur.
             - at this point, the stored number is the count. """
-        # find pattern in screen text
-        textToProcess = screen_text
-        highestNumber = 0
-        loopFlag = "continue"
-        while( loopFlag == "continue" ):
-            searchResult = re.search( self.regexPattern, textToProcess, re.VERBOSE )
-            if searchResult == None:
+        text_to_process = screen_text
+        loop_flag = 'continue'
+        while( loop_flag == 'continue' ):
+            search_result = re.search( self.regex_pattern, text_to_process, re.VERBOSE )
+            if search_result == None:
                 break
             else:
-                foundText = searchResult.group()
-                highestNumber = foundText[3:4]  # store the number
-                # delete all text up to and including this find.
-                foundTextStartPosition = textToProcess.find( foundText )  # -1 if not found
-                foundTextLength = len(foundText)
-                textToProcess = textToProcess[foundTextStartPosition + foundTextLength:]
-        returnVal = int(highestNumber)
-        return returnVal
+                text_to_process = self._process_search_result( search_result, text_to_process )
+        return int(self.highestNumber)
 
-
-
-    # def count_ftp_list_files( self, screen_text ):
-    #     # find pattern in screenText
-    #     # store that number
-    #     # delete all text up to and including this find.
-    #     # look again.
-    #     # if found, store number and repeat until no more finds occur.
-    #     # at this point, the stored number is the count.
-
-    #     import re
-    #     import string
-
-    #     # find pattern in screen text
-    #     regexPattern = """
-    #         (;1H)       # prefix
-    #         [0-9]       # targetNumber
-    #         [ ][>][ ]   # suffix
-    #         """
-    #     textToProcess = screen_text
-    #     highestNumber = 0
-    #     loopFlag = "continue"
-    #     while( loopFlag == "continue" ):
-    #         searchResult = re.search(regexPattern, textToProcess, re.VERBOSE)
-    #         if( searchResult == None):
-    #             break
-    #         else:
-    #             foundText = searchResult.group()
-    #             #store the number
-    #             highestNumber = foundText[3:4]
-    #             # delete all text up to and including this find.
-    #             foundTextStartPosition = string.find( textToProcess, foundText ) # haystack, needle. Will be -1 if not found
-    #             foundTextLength = len(foundText)
-    #             textToProcess = textToProcess[foundTextStartPosition + foundTextLength:]
-
-    #     # at this point, the stored number is the count
-    #     returnVal = int(highestNumber)
-    #     return returnVal
+    def _process_search_result( self, search_result, text_to_process ):
+        """ Grabs current-count in found_text, and deletes all text up to and including found_text for further examination.
+            Returns remaining text_to_process.
+            Called by count_ftp_list_files() """
+        found_text = search_result.group()
+        self.highestNumber = found_text[3:4]
+        foundtext_start_position = text_to_process.find( found_text )
+        foundtext_length = len( found_text )
+        text_to_process = text_to_process[ foundtext_start_position + foundtext_length: ]  # grabs rest of text after found_text
+        return text_to_process
 
     # end class FileCounter
 

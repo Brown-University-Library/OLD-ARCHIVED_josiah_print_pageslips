@@ -61,5 +61,5 @@ class FileCounterTest( unittest.TestCase ):
     # end class FileCounterTest
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
