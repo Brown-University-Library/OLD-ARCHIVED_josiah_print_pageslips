@@ -200,7 +200,7 @@ class FileTransferController( object ):
         # access 'Send print files out of innopac' screen
         #######
 
-        screen_name_text = "access 'Send print files out of innopac' screen (2nd time) step - "
+        screen_name_text = "access 'Send print files out of innopac' screen (2nd time) step"
 
         try:
             child.sendline( self.ftp_target_host )
@@ -232,7 +232,7 @@ class FileTransferController( object ):
         # delete existing file -- after confirming that number is still the same
         #######
 
-        screen_name_text = "deleting sent file step - "
+        screen_name_text = "deleting sent file step"
 
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterStringChecked = file_number_grabber.grab_file_number( textToExamine )
