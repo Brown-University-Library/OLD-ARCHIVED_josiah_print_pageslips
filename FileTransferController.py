@@ -156,7 +156,7 @@ class FileTransferController( object ):
         if(option == 0):
             logger.info( '%s - success' % screen_name_text )
         if(option == 1):
-            message = '%s - FAILED, problem: total size of files in FTP list is too big' % screen_name_text )
+            message = '%s - FAILED, problem: total size of files in FTP list is too big' % screen_name_text
             self.endProgram( message=message, message_type='problem', child=child )
 
 
