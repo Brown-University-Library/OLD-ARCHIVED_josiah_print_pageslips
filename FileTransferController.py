@@ -48,6 +48,10 @@ class FileTransferController( object ):
         self.login_password = os.environ['PGSLP__LOGIN_PASSWORD']
         self.initials_name = os.environ['PGSLP__INITIALS_NAME']
         self.initials_password = os.environ['PGSLP__INITIALS_PASSWORD']
+        self.ftp_target_host = os.environ['PGSLP__FTP_TARGET_HOST']
+        self.ftp_login_name = os.environ['PGSLP__FTP_LOGIN_NAME']
+        self.ftp_login_password = os.environ['PGSLP__FTP_LOGIN_PASSWORD']
+        self.ftp_destination_path = os.environ['PGSLP__FTP_DESTINATION_PATH']
 
 
     def runCode(self):
@@ -199,10 +203,10 @@ class FileTransferController( object ):
         screen_name_text = "access 'Send print files out of innopac' screen (2nd time) step - "
 
         try:
-            child.sendline(prefsInstance.ftpTargetHost)
-            child.sendline(prefsInstance.ftpLogin)
-            child.sendline(prefsInstance.ftpPassword)
-            child.sendline(prefsInstance.ftpDestinationPath)
+            child.sendline( self.ftp_target_host )
+            child.sendline( self.ftp_login_name )
+            child.sendline( self.ftp_login_password )
+            child.sendline( self.ftp_destination_path )
             option = child.expect(["Transfer completed", "File not transferred"])
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
