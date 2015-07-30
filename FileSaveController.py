@@ -147,9 +147,9 @@ class FileSaveController( object ):
         try:
             child.send('N')  # "N > Print circulation NOTICES"
             child.expect("key your initials")
-            child.sendline(initials_name)
+            child.sendline( self.initials_name )
             child.expect("key your password")
-            child.sendline(initials_password)
+            child.sendline( self.initials_password )
             child.expect("PRINT CIRCULATION NOTICES")
             child.expect("Choose one")  # "Choose one (O,X,R,H,P,L,B,S,C,Q)"
             logger.info( '%s - success' % screen_name_text )
