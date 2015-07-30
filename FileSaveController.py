@@ -200,33 +200,6 @@ class FileSaveController( object ):
         if(option == 2):
             logger.info( '%s - success (lots of cancellations, proceeding)' % screen_name_text )
 
-        # screen_name_text = "access 'Print page slips - preparing notices' screen step"
-        # option = ''
-        # try:
-        #     child.send('3')  # "3 > Prepare notices for Annex"
-        #     child.expect("notices for Annex")
-        #     option = child.expect( ["page slip file creation complete", "no page slip notices", "SPACE"] )
-        #     if(option == 0):
-        #         newLogEntry = screen_name_text + "success"
-        #     if(option == 1):
-        #         newLogEntry = screen_name_text + "NO PAGE-SLIP NOTICES TO PRINT"
-        #     if(option == 2):
-        #         newLogEntry = screen_name_text + "lots of cancellations, proceeding"
-        #     self.log = self.log + "\n" + newLogEntry
-        #     if(self.debug == "on"):
-        #         print newLogEntry
-        # except Exception as e:
-        #     message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
-        #     self.endProgram( message=message, message_type='problem', child=child )
-
-        # if(option == 0):
-        #     logger.info( '%s - success' % screen_name_text )
-        # if(option == 1):
-        #     message = '%s - NO PAGE-SLIP NOTICES TO PRINT' % screen_name_text
-        #     self.endProgram( message=message, message_type='success', child=child )
-        # if(option == 2):
-        #     logger.info( '%s - success (lots of cancellations, proceeding)' % screen_name_text )
-
 
         #######
         # access 'Print page slips - notices to process' screen
