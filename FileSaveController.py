@@ -111,11 +111,6 @@ class FileSaveController( object ):
 
         screen_name_text = "access 'Circulation' screen step"
         try:
-
-
-            1/0
-
-
             child.send('C')  # "C > CIRCULATION subsystem"
             child.expect("key your initials")
             child.sendline(initials_name)

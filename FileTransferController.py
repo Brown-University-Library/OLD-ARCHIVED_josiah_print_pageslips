@@ -112,11 +112,6 @@ class FileTransferController( object ):
 
         screen_name_text = "access 'Additional system functions' screen step - "
         try:
-
-
-            1/0
-
-
             child.send('A')  # "A > ADDITIONAL system functions"
             child.expect("key your initials")
             child.sendline(initialsName)
