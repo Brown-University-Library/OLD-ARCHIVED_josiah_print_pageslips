@@ -114,9 +114,9 @@ class FileTransferController( object ):
         try:
             child.send('A')  # "A > ADDITIONAL system functions"
             child.expect("key your initials")
-            child.sendline(initialsName)
+            child.sendline( self.initials_name )
             child.expect("key your password")
-            child.sendline(initialsPassword)
+            child.sendline( self.initials_password )
             child.expect("ADDITIONAL SYSTEM FUNCTIONS")
             child.expect("Choose one")  # "Choose one (C,B,S,M,D,R,E,V,F,N,U,O,A,Q)"
         except Exception as e:
