@@ -110,7 +110,7 @@ class FileTransferController( object ):
         # access 'Additional system functions' screen
         #######
 
-        screen_name_text = "access 'Additional system functions' screen step - "
+        screen_name_text = "access 'Additional system functions' screen step"
         try:
             child.send('A')  # "A > ADDITIONAL system functions"
             child.expect("key your initials")
@@ -129,7 +129,7 @@ class FileTransferController( object ):
         # access 'Read/write MARC records' screen
         #######
 
-        screen_name_text = "access 'Read/write marc records' screen step - "
+        screen_name_text = "access 'Read/write marc records' screen step"
         try:
             child.send('M')  # "M > Read/write MARC records"
             child.expect("READ/WRITE MARC RECORDS")
@@ -144,7 +144,7 @@ class FileTransferController( object ):
         # access 'Send print files out of innopac' screen
         #######
 
-        screen_name_text = "access 'Send print files out of innopac' screen step - "
+        screen_name_text = "access 'Send print files out of innopac' screen step"
         try:
             child.send('F')  # "F > Send print files out of INNOPAC using FTP"
             child.expect("Send print files out of INNOPAC")
@@ -172,7 +172,7 @@ class FileTransferController( object ):
         # Look for file to send
         #######
 
-        screen_name_text = "access 'Innopac file transfer' screen step - "
+        screen_name_text = "access 'Innopac file transfer' screen step"
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterString = file_number_grabber.grab_file_number( textToExamine )
         fileToSendName = file_number_grabber.found_file_name
