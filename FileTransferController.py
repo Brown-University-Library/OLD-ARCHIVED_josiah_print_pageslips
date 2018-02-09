@@ -305,6 +305,7 @@ class FileTransferController( object ):
         try:
             child.send( 'Q' )  # `Q > QUIT`
             child.expect( 'Send print files out of INNOPAC using FTP' )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
