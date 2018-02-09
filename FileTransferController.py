@@ -172,20 +172,20 @@ class FileTransferController( object ):
 
 
         #######
-        # access 'Innopac file transfer' screen
+        # access 'FILE TRANSFER SOFTWARE' screen
         # Look for file to send
         #######
 
-        screen_name_text = "access 'Innopac file transfer' screen step"
+        screen_name_text = "access `FILE TRANSFER SOFTWARE` screen first step of four"
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterString = file_number_grabber.grab_file_number( textToExamine )
         fileToSendName = file_number_grabber.found_file_name
         if(numberToEnterString != "-1"):  # means a legit file was found
             try:
-                child.send("F")  # F > FTP a print file to another system
+                child.send("F")  # F > SFTP a print file to another system
                 child.send(numberToEnterString)  # i.e."2 > jta_20060329_134110.p"
-                child.expect("INNOPAC FILE TRANSFER PROGRAM")
-                child.expect("Remote machine ID")  # "Choose one (F,R,Y,Q)"
+                child.expect("FILE TRANSFER SOFTWARE")
+                child.expect("ENTER a host")  # `E > ENTER a host`
             except Exception as e:
                 message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
@@ -197,35 +197,89 @@ class FileTransferController( object ):
 
 
         #######
-        # access 'Send print files out of innopac' screen
+        # still within 'FILE TRANSFER SOFTWARE' screen
+        # Initiate the file-transfer
         #######
 
-        screen_name_text = "access 'Send print files out of innopac' screen (2nd time) step"
+        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen second step"
+        try:
+            child.send("E")  # `E > ENTER a host`
+            child.expect("Enter host name:")
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+        logger.info( '%s - success' % screen_name_text )
+
+
+        #######
+        # still within 'FILE TRANSFER SOFTWARE' screen
+        # Enter host, username, password
+        #######
+
+        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen third step"
 
         try:
             child.sendline( self.ftp_target_host )
             child.sendline( self.ftp_login_name )
             child.sendline( self.ftp_login_password )
-            child.sendline( self.ftp_destination_path )
-            option = child.expect(["Transfer completed", "File not transferred"])
+            child.expect("Put File At")  # `Put File At Remote Site`
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
-        if( option == 0 ):
-            try:
-                child.send(" ")  # Press <SPACE> to continue
-                child.send(" ")  # Press <SPACE> to continue
-                child.expect( "Send print files out of INNOPAC using FTP" )
-                child.expect( "Choose one" )  # Choose one (F,R,Y,Q)
-            except:
-                message = '%s - FAILURE - (substep B) - but file `%s` WAS sent; closing session' % ( screen_name_text, fileToSendName )
-                self.endProgram( message=message, message_type='problem', child=child )
-            logger.info( '%s - success - file `%s` sent' % (screen_name_text, fileToSendName) )
 
-        if( option == 1 ):
-            message = '%s - FAILURE - (substep B) - file `%s` was NOT transferred; closing session' % ( screen_name_text, fileToSendName )
+        #######
+        # still within 'FILE TRANSFER SOFTWARE' screen
+        # Start file-transfer
+        #######
+
+        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen fourth step"
+
+        try:
+            child.send( 'T' )  # `T > TRANSFER files`
+            child.expect( 'Put File At Remote Site' )
+            child.expect( 'Enter name of remote file' )
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
+
+
+
+
+
+        #######
+        # still within 'FILE TRANSFER SOFTWARE' screen
+        # Start file-transfer
+        #######
+
+        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen fifth step"
+
+        try:
+            child.sendline( self.ftp_destination_path )
+            child.expect( 'Press C to continue' )
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+
+
+
+        #######
+        # still within 'FILE TRANSFER SOFTWARE' screen
+        # Exit file-transfer area
+        #######
+
+        screen_name_text = "access `Send print files out of INNOPAC using FTP` screen (after file-transfer) step"
+
+        try:
+            child.send( 'Q' )  # `Q > QUIT`
+            child.expect( 'Send print files out of INNOPAC using FTP' )
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+
+
+
+
 
 
         #######
@@ -241,7 +295,7 @@ class FileTransferController( object ):
         filesToFtpCount = file_counter.count_ftp_list_files( textToExamine )
         if( fileToDeleteName == fileToSendName ):
             try:
-                child.send("R")  # R > REMOVE files
+                child.send("D")  # `D > REMOVE files`
                 child.expect( "Input numbers" )  # "Input numbers of files to be removed:"
                 child.sendline( numberToEnterStringChecked )
                 child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
