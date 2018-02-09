@@ -71,6 +71,7 @@ class FileNumberGrabber( object ):
             - remove possible trailing space
             - remove possible preceeding 'H'
             - what's left is our number """
+        log.debug( 'screen_text, ```%s```' % screen )
         self.found_file_name = self._find_file_name( screen_text )
         if not self.found_file_name:
             return '-1'
@@ -78,9 +79,29 @@ class FileNumberGrabber( object ):
         log.debug( 'file_number, `%s`' % file_number )
         return file_number
 
+    # def _find_file_name( self, screen_text ):
+    #     """ Searches for filename by regex & sets it.
+    #         Called by grab_file_number() """
+    #     regex_pattern = """
+    #         (jta_20)        # initial prefix
+    #         [0-9][0-9]      # rest of year
+    #         [0-9][0-9]      # month
+    #         [0-9][0-9]      # day
+    #         (_)             # separator
+    #         [0-9][0-9]      # hour
+    #         [0-9][0-9]      # minute
+    #         [0-9][0-9]      # second
+    #         (\.)(p)         # suffix
+    #         """
+    #     search_result = re.search( regex_pattern, screen_text, re.VERBOSE )
+    #     if search_result:
+    #         self.found_file_name = search_result.group()
+    #     return self.found_file_name
+
     def _find_file_name( self, screen_text ):
         """ Searches for filename by regex & sets it.
             Called by grab_file_number() """
+        local_found_file_name = ''
         regex_pattern = """
             (jta_20)        # initial prefix
             [0-9][0-9]      # rest of year
@@ -94,8 +115,10 @@ class FileNumberGrabber( object ):
             """
         search_result = re.search( regex_pattern, screen_text, re.VERBOSE )
         if search_result:
-            self.found_file_name = search_result.group()
-        return self.found_file_name
+            local_found_file_name = search_result.group()
+        self.found_file_name = local_found_file_name
+        log.debug( 'local_found_file_name, ```%s```' % local_found_file_name )
+        return local_found_file_name
 
     def _determine_file_number( self, screen_text ):
         """ Finds and returns file-number given file-name.
@@ -108,6 +131,7 @@ class FileNumberGrabber( object ):
             segment_c = segment_b[1:]
         else:
             segment_c = segment_b
+        log.debug( 'returning segement, ```%s```' % segment_c )
         return segment_c
 
     # end class FileNumberGrabber
