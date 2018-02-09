@@ -71,7 +71,7 @@ class FileNumberGrabber( object ):
             - remove possible trailing space
             - remove possible preceeding 'H'
             - what's left is our number """
-        log.debug( 'screen_text, ```%s```' % screen )
+        log.debug( 'screen_text, ```%s```' % screen_text )
         self.found_file_name = self._find_file_name( screen_text )
         if not self.found_file_name:
             return '-1'
