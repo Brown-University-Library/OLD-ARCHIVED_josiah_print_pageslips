@@ -312,27 +312,27 @@ class FileTransferController( object ):
         # delete existing file -- after confirming that number is still the same
         #######
 
-        goal_text = "delete sent file"
-        textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
-        numberToEnterStringChecked = file_number_grabber.grab_file_number( textToExamine )
-        fileToDeleteName = file_number_grabber.found_file_name
-        ## also get number of files for possible extra alert message
-        filesToFtpCount = file_counter.count_ftp_list_files( textToExamine )
-        if( fileToDeleteName == fileToSendName ):
-            try:
-                child.send("D")  # `D > REMOVE files`
-                child.expect( "Input numbers" )  # "Input numbers of files to be removed:"
-                child.sendline( numberToEnterStringChecked )
-                child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
-                child.send("y")  # Remove file barttest.p? (y/n)
-                child.expect( "FTP a print file" )  # F > FTP a print file to another system
-                logger.info( '%s - success' % goal_text )
-            except Exception as e:
-                message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
-                self.endProgram( message=message, message_type='problem', child=child )
-        else:
-            message = '%s - FAILURE - fileToDeleteName `%s` doesn\'t match name-of-file-sent `%s`; closing session' % ( goal_text, fileToDeleteName, fileToSendName )
-            self.endProgram( message=message, message_type='problem', child=child )
+        # goal_text = "delete sent file"
+        # textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
+        # numberToEnterStringChecked = file_number_grabber.grab_file_number( textToExamine )
+        # fileToDeleteName = file_number_grabber.found_file_name
+        # ## also get number of files for possible extra alert message
+        # filesToFtpCount = file_counter.count_ftp_list_files( textToExamine )
+        # if( fileToDeleteName == fileToSendName ):
+        #     try:
+        #         child.send("D")  # `D > REMOVE files`
+        #         child.expect( "Input numbers" )  # "Input numbers of files to be removed:"
+        #         child.sendline( numberToEnterStringChecked )
+        #         child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
+        #         child.send("y")  # Remove file barttest.p? (y/n)
+        #         child.expect( "FTP a print file" )  # F > FTP a print file to another system
+        #         logger.info( '%s - success' % goal_text )
+        #     except Exception as e:
+        #         message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
+        #         self.endProgram( message=message, message_type='problem', child=child )
+        # else:
+        #     message = '%s - FAILURE - fileToDeleteName `%s` doesn\'t match name-of-file-sent `%s`; closing session' % ( goal_text, fileToDeleteName, fileToSendName )
+        #     self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
