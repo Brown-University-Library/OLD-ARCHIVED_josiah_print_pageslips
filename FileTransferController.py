@@ -125,6 +125,7 @@ class FileTransferController( object ):
             child.sendline( self.initials_password )
             child.expect("ADDITIONAL SYSTEM FUNCTIONS")
             child.expect("Choose one")  # "Choose one (C,B,S,M,D,R,E,V,F,N,U,O,A,Q)"
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -140,6 +141,7 @@ class FileTransferController( object ):
             child.send('M')  # "M > Read/write MARC records"
             child.expect("READ/WRITE MARC RECORDS")
             child.expect("Choose one")  # "Choose one (B,A,S,N,P,X,U,M,L,F,T,Q)"
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -188,10 +190,10 @@ class FileTransferController( object ):
                 child.send(numberToEnterString)  # i.e."2 > jta_20060329_134110.p"
                 child.expect("FILE TRANSFER SOFTWARE")
                 child.expect("ENTER a host")  # `E > ENTER a host`
+                logger.info( '%s - success' % goal_text )
             except Exception as e:
                 message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
-            logger.info( '%s - success' % goal_text )
         else:
             message = '%s - success, NO PAGE-SLIP FILES TO SEND; closing session' % goal_text
             logger.info( '%s - success' % message )
@@ -207,10 +209,10 @@ class FileTransferController( object ):
         try:
             child.send("E")  # `E > ENTER a host`
             child.expect("Enter host name:")
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-        logger.info( '%s - success' % goal_text )
 
 
         #######
