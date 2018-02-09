@@ -220,7 +220,7 @@ class FileTransferController( object ):
         # Enter host, username, password
         #######
 
-        goal_text = "in `FILE TRANSFER SOFTWARE` screen, enter host, usernam, & password"
+        goal_text = "in `FILE TRANSFER SOFTWARE` screen, enter host, username, & password"
         try:
             child.sendline( self.ftp_target_host )
             child.sendline( self.ftp_login_name )
@@ -240,7 +240,7 @@ class FileTransferController( object ):
         goal_text = "access `Put File At Remote Site` screen"
         try:
             child.send( 'T' )  # `T > TRANSFER files`
-            child.expect( 'Put File At Remote Site' )
+            # child.expect( 'Put File At Remote Site' )
             child.expect( 'Enter name of remote file' )
             log.info( '%s - success' % goal_text )
         except Exception as e:
