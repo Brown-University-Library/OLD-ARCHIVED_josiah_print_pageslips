@@ -129,7 +129,6 @@ class FileTransferController( object ):
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-        logger.info( '%s - success' % goal_text )
 
 
         #######
@@ -145,7 +144,6 @@ class FileTransferController( object ):
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-        logger.info( '%s - success' % goal_text )
 
 
         #######
@@ -183,7 +181,9 @@ class FileTransferController( object ):
         goal_text = "access `FILE TRANSFER SOFTWARE` screen first step of four"
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterString = file_number_grabber.grab_file_number( textToExamine )
+        log.debug( 'numberToEnterString, `%s`' % numberToEnterString )
         fileToSendName = file_number_grabber.found_file_name
+        log.debug( 'fileToSendName, `%s`' % fileToSendName )
         if(numberToEnterString != "-1"):  # means a legit file was found
             try:
                 child.send("F")  # F > SFTP a print file to another system
