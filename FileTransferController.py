@@ -301,16 +301,16 @@ class FileTransferController( object ):
         # Exit
         #######
 
-        goal_text = "in `Send print files out of INNOPAC using FTP` screen, Quit"
-        try:
-            # child.send( 'Q' )  # `Q > QUIT`
-            # child.expect( 'Send print files out of INNOPAC using FTP' )
-            ## the above two lines work, but seem to get me to a ```*** READ/WRITE MARC RECORDS ***``` screen with the options: ```Choose one (B,A,S,N,P,X,U,M,L,F,Q) [env_pgslp]bdiana@plibwwwcit$```
-            child.expect( 'HELLO FOO' )
-            log.info( '%s - success' % goal_text )
-        except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
-            self.endProgram( message=message, message_type='problem', child=child )
+        # goal_text = "in `Send print files out of INNOPAC using FTP` screen, Quit"
+        # try:
+        #     # child.send( 'Q' )  # `Q > QUIT`
+        #     # child.expect( 'Send print files out of INNOPAC using FTP' )
+        #     ## the above two lines work, but seem to get me to a ```*** READ/WRITE MARC RECORDS ***``` screen with the options: ```Choose one (B,A,S,N,P,X,U,M,L,F,Q) [env_pgslp]bdiana@plibwwwcit$```
+        #     child.expect( 'HELLO FOO' )
+        #     log.info( '%s - success' % goal_text )
+        # except Exception as e:
+        #     message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
+        #     self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
