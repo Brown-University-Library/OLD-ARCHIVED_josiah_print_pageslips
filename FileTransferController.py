@@ -35,7 +35,7 @@ logging.basicConfig(
     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
     datefmt='%d/%b/%Y %H:%M:%S'
     )
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 
@@ -56,14 +56,14 @@ class FileTransferController( object ):
 
     def runCode(self):
 
-        logger.info( 'starting run_code()' )
+        log.info( 'starting run_code()' )
 
         #######
         # setup environment
         #######
 
         dateAndTimeText = date_prepper.obtain_date()
-        logger.info( 'Automated ssh session starting at `%s`' % dateAndTimeText )
+        log.info( 'Automated ssh session starting at `%s`' % dateAndTimeText )
 
 
         #######
@@ -77,10 +77,10 @@ class FileTransferController( object ):
             if( LOG_LEVEL == 'DEBUG' ):
                 child.logfile = sys.stdout
             child.delaybeforesend = .5
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
-            logger.error( message )
+            log.error( message )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -92,7 +92,7 @@ class FileTransferController( object ):
         try:
             child.expect('password: ')
             child.sendline( self.login_password )
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             logger.error( message )
@@ -106,7 +106,7 @@ class FileTransferController( object ):
         goal_text = "confirm 'Main menu' screen"
         try:
             child.expect('Choose one')  # "Choose one (S,D,C,M,A,Q)"
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -125,7 +125,7 @@ class FileTransferController( object ):
             child.sendline( self.initials_password )
             child.expect("ADDITIONAL SYSTEM FUNCTIONS")
             child.expect("Choose one")  # "Choose one (C,B,S,M,D,R,E,V,F,N,U,O,A,Q)"
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -140,7 +140,7 @@ class FileTransferController( object ):
             child.send('M')  # "M > Read/write MARC records"
             child.expect("READ/WRITE MARC RECORDS")
             child.expect("Choose one")  # "Choose one (B,A,S,N,P,X,U,M,L,F,T,Q)"
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -160,7 +160,7 @@ class FileTransferController( object ):
             self.endProgram( message=message, message_type='problem', child=child )
 
         if(option == 0):
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         if(option == 1):
             message = '%s - FAILED, problem: total size of files in FTP list is too big' % goal_text
             self.endProgram( message=message, message_type='problem', child=child )
@@ -190,13 +190,13 @@ class FileTransferController( object ):
                 child.send(numberToEnterString)  # i.e."2 > jta_20060329_134110.p"
                 child.expect("FILE TRANSFER SOFTWARE")
                 child.expect("ENTER a host")  # `E > ENTER a host`
-                logger.info( '%s - success' % goal_text )
+                log.info( '%s - success' % goal_text )
             except Exception as e:
                 message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
         else:
             message = '%s - success, NO PAGE-SLIP FILES TO SEND; closing session' % goal_text
-            logger.info( '%s - success' % message )
+            log.info( '%s - success' % message )
             self.endProgram( message=message, message_type='success', child=child )
 
 
@@ -209,7 +209,7 @@ class FileTransferController( object ):
         try:
             child.send("E")  # `E > ENTER a host`
             child.expect("Enter host name:")
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -226,7 +226,7 @@ class FileTransferController( object ):
             child.sendline( self.ftp_login_name )
             child.sendline( self.ftp_login_password )
             child.expect("Put File At")  # `Put File At Remote Site`
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -242,7 +242,7 @@ class FileTransferController( object ):
             child.send( 'T' )  # `T > TRANSFER files`
             child.expect( 'Put File At Remote Site' )
             child.expect( 'Enter name of remote file' )
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -257,7 +257,7 @@ class FileTransferController( object ):
         try:
             child.sendline( self.ftp_destination_path )
             child.expect( 'Uploading' )
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -272,7 +272,7 @@ class FileTransferController( object ):
         try:
             child.send( 'C' )  # `C > CONTINUE`
             child.expect( 'QUIT' )
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -290,7 +290,7 @@ class FileTransferController( object ):
             child.expect( 'Press <SPACE> to continue' )
             child.send(" ")  # Press <SPACE> to continue
             child.expect( 'Send print files out of INNOPAC using FTP' )
-            logger.info( '%s - success' % goal_text )
+            log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
@@ -328,7 +328,7 @@ class FileTransferController( object ):
         #         child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
         #         child.send("y")  # Remove file barttest.p? (y/n)
         #         child.expect( "FTP a print file" )  # F > FTP a print file to another system
-        #         logger.info( '%s - success' % goal_text )
+        #         log.info( '%s - success' % goal_text )
         #     except Exception as e:
         #         message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
         #         self.endProgram( message=message, message_type='problem', child=child )
@@ -352,7 +352,7 @@ class FileTransferController( object ):
         # close
         #######
 
-        logger.info( 'closing session; pid, `%s`' % unicode(child.pid) )
+        log.info( 'closing session; pid, `%s`' % unicode(child.pid) )
         sys.stdout.flush()
         self.endProgram( message='closing session', message_type='success', child=child )
 
@@ -363,29 +363,29 @@ class FileTransferController( object ):
         """ Ends script in consistent manner.
             Called by various run_code() steps. """
 
-        logger.debug( 'starting endProgram()' )
-        logger.debug( 'message, `%s`' % message )
-        logger.debug( 'message_type, `%s`' % message_type )
-        logger.debug( 'child, `%s`' % child )
-        logger.debug( 'type(child.pid), `%s`' % type(child.pid) )
-        logger.debug( 'child.pid, `%s`' % unicode(repr(child.pid)) )
+        log.debug( 'starting endProgram()' )
+        log.debug( 'message, `%s`' % message )
+        log.debug( 'message_type, `%s`' % message_type )
+        log.debug( 'child, `%s`' % child )
+        log.debug( 'type(child.pid), `%s`' % type(child.pid) )
+        log.debug( 'child.pid, `%s`' % unicode(repr(child.pid)) )
 
         if child == None:  # happens on failed connection
-            logger.info( 'no pexpect child' )
+            log.info( 'no pexpect child' )
         else:
             try:
                 command = 'kill -9 %s' % child.pid
                 os.popen( command.encode('utf-8') )
-                logger.debug( 'script process successfully ended' )
+                log.debug( 'script process successfully ended' )
             except Exception as e:
-                logger.error( 'Problem killing process, exception, `%s`' % unicode(repr(e)) )
+                log.error( 'Problem killing process, exception, `%s`' % unicode(repr(e)) )
 
         if message_type == 'problem':
             subject = 'josiah-pageslip transfer problem'
             m = Mailer( subject, message )
             m.send_email()
 
-        logger.info( 'Automated ssh session ending' )
+        log.info( 'Automated ssh session ending' )
 
         sys.exit()
 
