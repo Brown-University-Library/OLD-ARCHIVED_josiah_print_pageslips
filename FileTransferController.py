@@ -95,7 +95,7 @@ class FileTransferController( object ):
             log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
-            logger.error( message )
+            log.error( message )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
