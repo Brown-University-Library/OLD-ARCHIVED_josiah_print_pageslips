@@ -188,8 +188,8 @@ class FileTransferController( object ):
             try:
                 child.send("F")  # F > SFTP a print file to another system
                 child.send(numberToEnterString)  # i.e."2 > jta_20060329_134110.p"
-                child.expect("FILE TRANSFER SOFTWARE")
-                child.expect("ENTER a host")  # `E > ENTER a host`
+                child.expect("FORWARD")
+                # child.expect("ENTER a host")  # `E > ENTER a host`
                 log.info( '%s - success' % goal_text )
             except Exception as e:
                 message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
@@ -207,7 +207,7 @@ class FileTransferController( object ):
 
         goal_text = "in `FILE TRANSFER SOFTWARE` screen, start transfer process"
         try:
-            child.send("E")  # `E > ENTER a host`
+            child.send("E")  # `E > ENTER a host` is what this represents, and is legit, but the label is only viewable if clicking `+` for `+ > ADDITIONAL OPTIONS`
             child.expect("Enter host name:")
             log.info( '%s - success' % goal_text )
         except Exception as e:
