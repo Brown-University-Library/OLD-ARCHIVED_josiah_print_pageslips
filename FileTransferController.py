@@ -70,15 +70,16 @@ class FileTransferController( object ):
         # connect
         #######
 
+        goal_text = 'connect via ssh'
         child = None
         try:
             child = pexpect.spawn('ssh ' + self.login_name + "@" + self.ssh_target_host)
             if( LOG_LEVEL == 'DEBUG' ):
                 child.logfile = sys.stdout
             child.delaybeforesend = .5
-            logger.info( 'connect via ssh step - success' )
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
-            message = 'connect via ssh FAILED, exception, `%s`' % unicode(repr(e))
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             logger.error( message )
             self.endProgram( message=message, message_type='problem', child=child )
 
@@ -87,12 +88,13 @@ class FileTransferController( object ):
         # authenticate
         #######
 
+        goal_text = 'login'
         try:
             child.expect('password: ')
             child.sendline( self.login_password )
-            logger.info( 'login step - success' )
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
-            message = 'Login step FAILED, exception, `%s`' % unicode(repr(e))
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             logger.error( message )
             self.endProgram( message=message, message_type='problem', child=child )
 
@@ -101,12 +103,12 @@ class FileTransferController( object ):
         # access *** MAIN MENU ***
         #######
 
-        screen_name_text = "access 'Main menu' screen step"
+        goal_text = "confirm 'Main menu' screen"
         try:
             child.expect('Choose one')  # "Choose one (S,D,C,M,A,Q)"
-            logger.info( '%s - success' % screen_name_text )
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -114,7 +116,7 @@ class FileTransferController( object ):
         # access 'Additional system functions' screen
         #######
 
-        screen_name_text = "access 'Additional system functions' screen step"
+        goal_text = "access 'Additional system functions' screen"
         try:
             child.send('A')  # "A > ADDITIONAL system functions"
             child.expect("key your initials")
@@ -124,43 +126,43 @@ class FileTransferController( object ):
             child.expect("ADDITIONAL SYSTEM FUNCTIONS")
             child.expect("Choose one")  # "Choose one (C,B,S,M,D,R,E,V,F,N,U,O,A,Q)"
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-        logger.info( '%s - success' % screen_name_text )
+        logger.info( '%s - success' % goal_text )
 
 
         #######
         # access 'Read/write MARC records' screen
         #######
 
-        screen_name_text = "access 'Read/write marc records' screen step"
+        goal_text = "access 'Read/write marc records' screen"
         try:
             child.send('M')  # "M > Read/write MARC records"
             child.expect("READ/WRITE MARC RECORDS")
             child.expect("Choose one")  # "Choose one (B,A,S,N,P,X,U,M,L,F,T,Q)"
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-        logger.info( '%s - success' % screen_name_text )
+        logger.info( '%s - success' % goal_text )
 
 
         #######
         # access 'Send print files out of innopac' screen
         #######
 
-        screen_name_text = "access 'Send print files out of innopac' screen step"
+        goal_text = "access 'Send print files out of innopac' screen"
         try:
             child.send('F')  # "F > Send print files out of INNOPAC using FTP"
             child.expect("Send print files out of INNOPAC")
             option = child.expect(["Choose one", "until their combined total size"])  # "Choose one (F,R,Y,Q)"
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
         if(option == 0):
-            logger.info( '%s - success' % screen_name_text )
+            logger.info( '%s - success' % goal_text )
         if(option == 1):
-            message = '%s - FAILED, problem: total size of files in FTP list is too big' % screen_name_text
+            message = '%s - FAILED, problem: total size of files in FTP list is too big' % goal_text
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -176,7 +178,7 @@ class FileTransferController( object ):
         # Look for file to send
         #######
 
-        screen_name_text = "access `FILE TRANSFER SOFTWARE` screen first step of four"
+        goal_text = "access `FILE TRANSFER SOFTWARE` screen first step of four"
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterString = file_number_grabber.grab_file_number( textToExamine )
         fileToSendName = file_number_grabber.found_file_name
@@ -187,11 +189,11 @@ class FileTransferController( object ):
                 child.expect("FILE TRANSFER SOFTWARE")
                 child.expect("ENTER a host")  # `E > ENTER a host`
             except Exception as e:
-                message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+                message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
-            logger.info( '%s - success' % screen_name_text )
+            logger.info( '%s - success' % goal_text )
         else:
-            message = '%s - success, NO PAGE-SLIP FILES TO SEND; closing session' % screen_name_text
+            message = '%s - success, NO PAGE-SLIP FILES TO SEND; closing session' % goal_text
             logger.info( '%s - success' % message )
             self.endProgram( message=message, message_type='success', child=child )
 
@@ -201,14 +203,14 @@ class FileTransferController( object ):
         # Initiate the file-transfer
         #######
 
-        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen second step"
+        goal_text = "in `FILE TRANSFER SOFTWARE` screen, start transfer process"
         try:
             child.send("E")  # `E > ENTER a host`
             child.expect("Enter host name:")
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-        logger.info( '%s - success' % screen_name_text )
+        logger.info( '%s - success' % goal_text )
 
 
         #######
@@ -216,78 +218,101 @@ class FileTransferController( object ):
         # Enter host, username, password
         #######
 
-        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen third step"
-
+        goal_text = "in `FILE TRANSFER SOFTWARE` screen, enter host, usernam, & password"
         try:
             child.sendline( self.ftp_target_host )
             child.sendline( self.ftp_login_name )
             child.sendline( self.ftp_login_password )
             child.expect("Put File At")  # `Put File At Remote Site`
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
         #######
-        # still within 'FILE TRANSFER SOFTWARE' screen
-        # Start file-transfer
+        # Still within 'FILE TRANSFER SOFTWARE' screen
+        # Initiate file-transfer process
         #######
 
-        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen fourth step"
-
+        goal_text = "access `Put File At Remote Site` screen"
         try:
             child.send( 'T' )  # `T > TRANSFER files`
             child.expect( 'Put File At Remote Site' )
             child.expect( 'Enter name of remote file' )
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
-
-
-
         #######
-        # still within 'FILE TRANSFER SOFTWARE' screen
+        # In `Put File At Remote Site` screen
         # Start file-transfer
         #######
 
-        screen_name_text = "process `FILE TRANSFER SOFTWARE` screen fifth step"
-
+        goal_text = "in `Put File At Remote Site` screen, initiate upload"
         try:
             child.sendline( self.ftp_destination_path )
-            child.expect( 'Press C to continue' )
+            child.expect( 'Uploading' )
+            logger.info( '%s - success' % goal_text )
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
+        #######
+        # Still in `Put File At Remote Site` screen
+        # Continue
+        #######
+
+        goal_text = "in `Put File At Remote Site` screen, continue"
+        try:
+            child.send( 'C' )  # `C > CONTINUE`
+            child.expect( 'QUIT' )
+            logger.info( '%s - success' % goal_text )
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+
 
         #######
-        # still within 'FILE TRANSFER SOFTWARE' screen
-        # Exit file-transfer area
+        # Still in `Put File At Remote Site` screen
+        # Quit
         #######
 
-        screen_name_text = "access `Send print files out of INNOPAC using FTP` screen (after file-transfer) step"
+        goal_text = "access `Send print files out of INNOPAC using FTP` screen (after file-transfer)"
 
+        try:
+            child.send( 'Q' )  # `Q > QUIT`
+            child.expect( 'Press <SPACE> to continue' )
+            child.send(" ")  # Press <SPACE> to continue
+            child.expect( 'Send print files out of INNOPAC using FTP' )
+            logger.info( '%s - success' % goal_text )
+        except Exception as e:
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
+            self.endProgram( message=message, message_type='problem', child=child )
+
+
+        #######
+        # Back in `Send print files out of INNOPAC using FTP` screen
+        # Exit
+        #######
+
+        goal_text = "in `Send print files out of INNOPAC using FTP` screen, Quit"
         try:
             child.send( 'Q' )  # `Q > QUIT`
             child.expect( 'Send print files out of INNOPAC using FTP' )
         except Exception as e:
-            message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+            message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
             self.endProgram( message=message, message_type='problem', child=child )
-
-
-
-
 
 
         #######
         # delete existing file -- after confirming that number is still the same
         #######
 
-        screen_name_text = "deleting sent file step"
-
+        goal_text = "delete sent file"
         textToExamine = child.before  # Will capture all text from after 'Send print files out of INNOPAC' to before 'Choose one'
         numberToEnterStringChecked = file_number_grabber.grab_file_number( textToExamine )
         fileToDeleteName = file_number_grabber.found_file_name
@@ -301,12 +326,12 @@ class FileTransferController( object ):
                 child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
                 child.send("y")  # Remove file barttest.p? (y/n)
                 child.expect( "FTP a print file" )  # F > FTP a print file to another system
+                logger.info( '%s - success' % goal_text )
             except Exception as e:
-                message = '%s - FAILED, exception, `%s`' % ( screen_name_text, unicode(repr(e)) )
+                message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
                 self.endProgram( message=message, message_type='problem', child=child )
-            logger.info( '%s - success' % screen_name_text )
         else:
-            message = '%s - FAILURE - fileToDeleteName `%s` doesn\'t match name-of-file-sent `%s`; closing session' % ( screen_name_text, fileToDeleteName, fileToSendName )
+            message = '%s - FAILURE - fileToDeleteName `%s` doesn\'t match name-of-file-sent `%s`; closing session' % ( goal_text, fileToDeleteName, fileToSendName )
             self.endProgram( message=message, message_type='problem', child=child )
 
 
@@ -362,7 +387,7 @@ class FileTransferController( object ):
 
         sys.exit()
 
-        # end def endProgram()
+        ## end def endProgram()
 
 
 if __name__ == "__main__":
