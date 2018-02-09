@@ -303,8 +303,10 @@ class FileTransferController( object ):
 
         goal_text = "in `Send print files out of INNOPAC using FTP` screen, Quit"
         try:
-            child.send( 'Q' )  # `Q > QUIT`
-            child.expect( 'Send print files out of INNOPAC using FTP' )
+            # child.send( 'Q' )  # `Q > QUIT`
+            # child.expect( 'Send print files out of INNOPAC using FTP' )
+            ## the above two lines work, but seem to get me to a ```*** READ/WRITE MARC RECORDS ***``` screen with the options: ```Choose one (B,A,S,N,P,X,U,M,L,F,Q) [env_pgslp]bdiana@plibwwwcit$```
+            child.expect( 'HELLO FOO' )
             log.info( '%s - success' % goal_text )
         except Exception as e:
             message = '%s - FAILED, exception, `%s`' % ( goal_text, unicode(repr(e)) )
@@ -325,6 +327,7 @@ class FileTransferController( object ):
             try:
                 child.send("D")  # `D > REMOVE files`
                 child.expect( "Input numbers" )  # "Input numbers of files to be removed:"
+                log.debug( 'do I get here?' )
                 child.sendline( numberToEnterStringChecked )
                 child.expect( "Remove file" )  # Remove file barttest.p? (y/n)
                 child.send("y")  # Remove file barttest.p? (y/n)
